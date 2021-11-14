@@ -2294,7 +2294,7 @@ end
            }
 
 
-       local Chestareas = {'Magma Chest', 'Enchanted Chest', 'Hell Chest', 'Haunted Chest', 'Angel Chest', 'Grand Heaven Chest', 'Giant Tech Chest', 'Giant Steampunk Chest', 'Giant Alien Chest'}
+       local Chestareas = {'off','Magma Chest', 'Enchanted Chest', 'Hell Chest', 'Haunted Chest', 'Angel Chest', 'Grand Heaven Chest', 'Giant Tech Chest', 'Giant Steampunk Chest', 'Giant Alien Chest'}
        Autofarm2:Dropdown("Select Chest [Testing]",Chestareas,function(chestfarm) 
         if chestfarm then
         _G.Chestareas = chestfarm
@@ -2459,7 +2459,7 @@ end
                             end)()
                         end
                  end
-                 repeat task.wait(0.001) until not game:GetService("Workspace")["__THINGS"].Coins:FindFirstChild(v.index) or #game:GetService("Workspace")["__THINGS"].Coins[v.index].Pets:GetChildren() == 0 or not _G.Farm
+                 repeat task.wait(0.001) until not game:GetService("Workspace")["__THINGS"].Coins:FindFirstChild(v.index) or #game:GetService("Workspace")["__THINGS"].Coins[v.index].Pets:GetChildren() == 0 or not _G.Farm or _G.Chestareas ~= 'off'
          end
          end
         end
