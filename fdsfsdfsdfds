@@ -1,0 +1,4444 @@
+
+if game.PlaceId == 6284583030 then
+    local start = tick()
+    repeat task.wait() until game:isLoaded()
+    repeat task.wait() until game:GetService("Players")
+    repeat task.wait() until game:GetService("Players").LocalPlayer
+    repeat task.wait() until game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui.Main.Enabled
+    repeat task.wait() until game:GetService("Workspace"):FindFirstChild('__MAP')
+end
+
+
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "buy egg")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "join coin")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "farm coin")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "claim orbs")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "change pet target")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "get trade")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "add trade pet")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "remove trade pet")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "convert to dark matter")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "redeem dark matter pet")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "redeem rank rewards")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "redeem vip rewards")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "toggle setting")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "activate boost")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "use golden machine")
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "use rainbow machine")
+
+
+
+if game.CoreGui:FindFirstChild("Mana") then
+    game.CoreGui:FindFirstChild("Mana"):Destroy()
+  end   
+  local VLib = {RainbowColorValue = 0, HueSelectionPosition = 0}
+  local UserInputService = game:GetService("UserInputService")
+  local TweenService = game:GetService("TweenService")
+  local RunService = game:GetService("RunService")
+  local LocalPlayer = game:GetService("Players").LocalPlayer
+  local Mouse = LocalPlayer:GetMouse()
+  
+  
+  coroutine.wrap(
+   function()
+      while wait() do
+         VLib.RainbowColorValue = VLib.RainbowColorValue + 1 / 255
+         VLib.HueSelectionPosition = VLib.HueSelectionPosition + 1
+  
+         if VLib.RainbowColorValue >= 1 then
+            VLib.RainbowColorValue = 0
+         end
+  
+         if VLib.HueSelectionPosition == 80 then
+            VLib.HueSelectionPosition = 0
+         end
+      end
+   end
+  )()
+  
+  local function MakeDraggable(topbarobject, object)
+   local Dragging = nil
+   local DragInput = nil
+   local DragStart = nil
+   local StartPosition = nil
+  
+   local function Update(input)
+      local Delta = input.Position - DragStart
+      local pos =
+         UDim2.new(
+            StartPosition.X.Scale,
+            StartPosition.X.Offset + Delta.X,
+            StartPosition.Y.Scale,
+            StartPosition.Y.Offset + Delta.Y
+         )
+      local Tween = TweenService:Create(object, TweenInfo.new(0.2), {Position = pos})
+      Tween:Play()
+   end
+  
+   topbarobject.InputBegan:Connect(
+      function(input)
+         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            Dragging = true
+            DragStart = input.Position
+            StartPosition = object.Position
+  
+            input.Changed:Connect(
+               function()
+                  if input.UserInputState == Enum.UserInputState.End then
+                     Dragging = false
+                  end
+               end
+            )
+         end
+      end
+   )
+  
+   topbarobject.InputChanged:Connect(
+      function(input)
+         if
+            input.UserInputType == Enum.UserInputType.MouseMovement or
+               input.UserInputType == Enum.UserInputType.Touch
+         then
+            DragInput = input
+         end
+      end
+   )
+  
+   UserInputService.InputChanged:Connect(
+      function(input)
+         if input == DragInput and Dragging then
+            Update(input)
+         end
+      end
+   )
+  end
+  
+  local Mana = Instance.new("ScreenGui")
+  Mana.Name = "Mana"
+  Mana.Parent =  game.CoreGui
+  Mana.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+  
+  local uitoggled = false
+  UserInputService.InputBegan:Connect(
+   function(io, p)
+      if io.KeyCode == Enum.KeyCode.RightControl then
+         if uitoggled == false then
+            Mana.Enabled = false
+            uitoggled = true
+         else
+            Mana.Enabled = true
+            uitoggled = false
+         end
+      end
+   end
+  )
+  
+  function VLib:Window(text, textgame, textcircle)
+   local FirstTab = false
+   local MainFrame = Instance.new("Frame")
+   local MainCorner = Instance.new("UICorner")
+   local LeftFrame = Instance.new("Frame")
+   local LeftFrameCorner = Instance.new("UICorner")
+   local MainTitle = Instance.new("TextLabel")
+   local Circle = Instance.new("Frame")
+   local CircleCorner = Instance.new("UICorner")
+   local CircleName = Instance.new("TextLabel")
+   local GameTitle = Instance.new("TextLabel")
+   local TabHolder = Instance.new("Frame")
+   local TabHoldLayout = Instance.new("UIListLayout")
+   local RainbowLine = Instance.new("Frame")
+   local RainbowLineCorner = Instance.new("UICorner")
+   local ContainerHold = Instance.new("Folder")
+   local DragFrame = Instance.new("Frame")
+   local Glow = Instance.new("ImageLabel")
+  
+   MainFrame.Name = "MainFrame"
+   MainFrame.Parent = Mana
+   MainFrame.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+   MainFrame.Position = UDim2.new(0.5, -325, 0.5, -250)
+   MainFrame.Size = UDim2.new(0, 650, 0, 500)
+  
+   MainCorner.CornerRadius = UDim.new(0, 5)
+   MainCorner.Name = "MainCorner"
+   MainCorner.Parent = MainFrame
+  
+   LeftFrame.Name = "LeftFrame"
+   LeftFrame.Parent = MainFrame
+   LeftFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+   LeftFrame.Position = UDim2.new(-0.000674468291, 0, -0.000149806539, 0)
+   LeftFrame.Size = UDim2.new(0, 190, 0, 500)
+  
+   LeftFrameCorner.CornerRadius = UDim.new(0, 5)
+   LeftFrameCorner.Name = "LeftFrameCorner"
+   LeftFrameCorner.Parent = LeftFrame
+  
+   MainTitle.Name = "MainTitle"
+   MainTitle.Parent = LeftFrame
+   MainTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+   MainTitle.BackgroundTransparency = 1.000
+   MainTitle.Position = UDim2.new(0.168, 0, 0.043, 0)
+   MainTitle.Size = UDim2.new(0, 71, 0, 20)
+   MainTitle.Font = Enum.Font.Gotham 
+   MainTitle.Text = text
+   MainTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+   MainTitle.TextSize = 25.000
+   MainTitle.TextXAlignment = Enum.TextXAlignment.Left
+  
+  
+   GameTitle.Name = "GameTitle"
+   GameTitle.Parent = LeftFrame
+   GameTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+   GameTitle.BackgroundTransparency = 1.000
+   GameTitle.Position = UDim2.new(0.168, 0, 0.089, 6)
+   GameTitle.Size = UDim2.new(0, 71, 0, 20)
+   GameTitle.Font = Enum.Font.Gotham
+   GameTitle.Text = textgame
+   GameTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+   GameTitle.TextSize = 17.000
+   GameTitle.TextTransparency = 0.400
+   GameTitle.TextXAlignment = Enum.TextXAlignment.Left
+  
+   TabHolder.Name = "TabHolder"
+   TabHolder.Parent = LeftFrame
+   TabHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+   TabHolder.BackgroundTransparency = 1.000
+   TabHolder.Position = UDim2.new(0.0806451589, 0, 0.189360261, 0)
+   TabHolder.Size = UDim2.new(0, 159, 0, 309)
+  
+   TabHoldLayout.Name = "TabHoldLayout"
+   TabHoldLayout.Parent = TabHolder
+   TabHoldLayout.SortOrder = Enum.SortOrder.LayoutOrder
+   TabHoldLayout.Padding = UDim.new(0,5)
+  
+   ContainerHold.Name = "ContainerHold"
+   ContainerHold.Parent = MainFrame
+  
+   DragFrame.Name = "DragFrame"
+   DragFrame.Parent = MainFrame
+   DragFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+   DragFrame.BackgroundTransparency = 1.000
+   DragFrame.Position = UDim2.new(0.30130294, 0, 0.00253164559, 0)
+   DragFrame.Size = UDim2.new(0, 428, 0, 21)
+  
+   Glow.Name = "Glow"
+   Glow.Parent = LeftFrame
+   Glow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+   Glow.BackgroundTransparency = 1.000
+   Glow.BorderSizePixel = 0
+   Glow.Position = UDim2.new(0, -15, 0, -15)
+   Glow.Size = UDim2.new(1, 30, 1, 30)
+   Glow.ZIndex = 0
+   Glow.Image = "rbxassetid://4996891970"
+   Glow.ImageColor3 = Color3.fromRGB(15, 15, 15)
+   Glow.ScaleType = Enum.ScaleType.Slice
+   Glow.SliceCenter = Rect.new(20, 20, 280, 280)
+  
+   MakeDraggable(DragFrame, MainFrame)
+  
+   function VLib:Notification(textdesc)
+      local NotificationHold = Instance.new("TextButton")
+      local NotificationFrame = Instance.new("Frame")
+      local OkayBtn = Instance.new("TextButton")
+      local OkayBtnCorner = Instance.new("UICorner")
+      local OkayBtnTitle = Instance.new("TextLabel")
+      local NotificationTitle = Instance.new("TextLabel")
+      local NotificationDesc = Instance.new("TextLabel")
+  
+      NotificationHold.Name = "NotificationHold"
+      NotificationHold.Parent = MainFrame
+      NotificationHold.BackgroundColor3 = Color3.fromRGB(125, 125, 125)
+      NotificationHold.BackgroundTransparency = 0.700
+      NotificationHold.BorderSizePixel = 0
+      NotificationHold.Size = UDim2.new(0, 650, 0, 500)
+      NotificationHold.AutoButtonColor = false
+      NotificationHold.Font = Enum.Font.SourceSans
+      NotificationHold.Text = ""
+      NotificationHold.TextColor3 = Color3.fromRGB(0, 0, 0)
+      NotificationHold.TextSize = 14.000
+  
+      TweenService:Create(
+         NotificationHold,
+         TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+         {BackgroundTransparency = 0.7}
+      ):Play()
+      wait(0.4)
+  
+      NotificationFrame.Name = "NotificationFrame"
+      NotificationFrame.Parent = NotificationHold
+      NotificationFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+      NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+      NotificationFrame.BorderSizePixel = 0
+      NotificationFrame.ClipsDescendants = true
+      NotificationFrame.Position = UDim2.new(0.5, 0, 0.498432577, 0)
+      NotificationFrame.Size = UDim2.new(0, 0, 0, 0)		
+  
+      NotificationFrame:TweenSize(UDim2.new(0, 305,0, 283), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
+  
+      OkayBtn.Name = "OkayBtn"
+      OkayBtn.Parent = NotificationFrame
+      OkayBtn.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+      OkayBtn.Position = UDim2.new(0.171131134, 0, 0.759717345, 0)
+      OkayBtn.Size = UDim2.new(0, 200, 0, 42)
+      OkayBtn.AutoButtonColor = false
+      OkayBtn.Font = Enum.Font.SourceSans
+      OkayBtn.Text = ""
+      OkayBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+      OkayBtn.TextSize = 14.000
+  
+      OkayBtnCorner.CornerRadius = UDim.new(0, 5)
+      OkayBtnCorner.Name = "OkayBtnCorner"
+      OkayBtnCorner.Parent = OkayBtn
+  
+      OkayBtnTitle.Name = "OkayBtnTitle"
+      OkayBtnTitle.Parent = OkayBtn
+      OkayBtnTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+      OkayBtnTitle.BackgroundTransparency = 1.000
+      OkayBtnTitle.Size = UDim2.new(0, 200, 0, 42)
+      OkayBtnTitle.Text = "Okey"
+      OkayBtnTitle.Font = Enum.Font.Gotham
+      OkayBtnTitle.TextColor3 = Color3.fromRGB(202, 202, 202)
+      OkayBtnTitle.TextSize = 24.000
+  
+      NotificationTitle.Name = "NotificationTitle"
+      NotificationTitle.Parent = NotificationFrame
+      NotificationTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+      NotificationTitle.BackgroundTransparency = 1.000
+      NotificationTitle.Position = UDim2.new(0.0559394211, 0, 0.0652336925, 0)
+      NotificationTitle.Size = UDim2.new(0, 272, 0, 26)
+      NotificationTitle.ZIndex = 3
+      NotificationTitle.Font = Enum.Font.Gotham
+      NotificationTitle.Text = "Notification"
+      NotificationTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+      NotificationTitle.TextSize = 24.000
+  
+      NotificationDesc.Name = "NotificationDesc"
+      NotificationDesc.Parent = NotificationFrame
+      NotificationDesc.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+      NotificationDesc.BackgroundTransparency = 1.000
+      NotificationDesc.Position = UDim2.new(0.0670000017, 0, 0.218999997, 0)
+      NotificationDesc.Size = UDim2.new(0, 274, 0, 146)
+      NotificationDesc.Font = Enum.Font.Gotham
+      NotificationDesc.Text = textdesc
+      NotificationDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
+      NotificationDesc.TextSize = 20.000
+      NotificationDesc.TextWrapped = true
+      NotificationDesc.TextXAlignment = Enum.TextXAlignment.Center
+      NotificationDesc.TextYAlignment = Enum.TextYAlignment.Top
+  
+      OkayBtn.MouseEnter:Connect(function()
+         TweenService:Create(
+            OkayBtn,
+            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(37,37,37)}
+         ):Play()
+      end)
+  
+      OkayBtn.MouseLeave:Connect(function()
+         TweenService:Create(
+            OkayBtn,
+            TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
+         ):Play()
+      end)
+  
+      OkayBtn.MouseButton1Click:Connect(function()
+         NotificationFrame:TweenSize(UDim2.new(0, 0,0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
+  
+         wait(0.4)
+  
+         TweenService:Create(
+            NotificationHold,
+            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 1}
+         ):Play()
+  
+         wait(.3)
+  
+         NotificationHold:Destroy()
+      end)
+   end
+  
+   coroutine.wrap(
+      function()
+         while wait() do
+         end
+      end
+   )()
+   local Tabs = {}
+   function Tabs:Tab(text)
+      local Tab = Instance.new("TextButton")
+      local TabCorner = Instance.new("UICorner")
+      local Title = Instance.new("TextLabel")
+      local UIGradient = Instance.new('UIGradient')
+      Tab.Name = "Tab"
+      Tab.Parent = TabHolder
+      Tab.BackgroundColor3 = Color3.fromRGB(255,255,255)
+      Tab.Size = UDim2.new(0, 170, 0, 35)
+      Tab.AutoButtonColor = false
+      Tab.Font = Enum.Font.SourceSans
+      Tab.Text = ""
+      Tab.TextColor3 = Color3.fromRGB(0, 0, 0)
+      Tab.TextSize = 15.000
+      Tab.BackgroundTransparency = 1
+  
+      UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(160, 207, 236)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(102, 152, 255))}
+      UIGradient.Parent = Tab
+  
+  
+      TabCorner.CornerRadius = UDim.new(0, 3)
+      TabCorner.Name = "TabCorner"
+      TabCorner.Parent = Tab
+  
+      Title.Name = "Title"
+      Title.Parent = Tab
+      Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+      Title.BackgroundTransparency = 1.000
+      Title.Position = UDim2.new(0.0566037744, 0, 0.1, 0)
+      Title.Size = UDim2.new(0, 150, 0, 29)
+      Title.Font = Enum.Font.Gotham
+      Title.Text = text
+      Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+      Title.TextSize = 17.000
+      Title.TextXAlignment = Enum.TextXAlignment.Left
+  
+      local Container = Instance.new("ScrollingFrame")
+      local ContainerLayout = Instance.new("UIListLayout")
+  
+      Container.Name = "Container"
+      Container.Parent = ContainerHold
+      Container.Active = true
+      Container.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+      Container.BackgroundTransparency = 1.000
+      Container.BorderSizePixel = 0
+      Container.Position = UDim2.new(0.34, 0, 0.0506329127, 0)
+      Container.Size = UDim2.new(0, 420, 0, 450)
+      Container.ScrollBarThickness = 5
+      Container.CanvasSize = UDim2.new(0, 0, 0, 0)
+      Container.Visible = false
+      Container.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
+  
+      ContainerLayout.Name = "ContainerLayout"
+      ContainerLayout.Parent = Container
+      ContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+      ContainerLayout.Padding = UDim.new(0, 15)
+  
+      if FirstTab == false then
+         FirstTab = true
+         Tab.BackgroundTransparency = 0
+         Container.Visible = true
+      end
+      Tab.MouseButton1Click:Connect(
+         function()
+            for i, v in next, ContainerHold:GetChildren() do
+               if v.Name == "Container" then
+                  v.Visible = false
+               end
+            end
+  
+            for i, v in next, TabHolder:GetChildren() do
+               if v.ClassName == "TextButton" then
+                  TweenService:Create(
+                     v,
+                     TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                     {BackgroundTransparency = 1}
+                  ):Play()
+                  TweenService:Create(
+                     Tab,
+                     TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                     {BackgroundTransparency = 0}
+                  ):Play()
+               end
+            end
+            Container.Visible = true
+         end
+      )
+      local ContainerItems = {}
+      function ContainerItems:Button(text, callback)
+         local Button = Instance.new("TextButton")
+         local ButtonCorner = Instance.new("UICorner")
+  
+         Button.Name = "Button"
+         Button.Parent = Container
+         Button.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Button.Size = UDim2.new(0, 405, 0, 40)
+         Button.AutoButtonColor = false
+         Button.Font = Enum.Font.Gotham
+         Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Button.TextSize = 15.000
+         Button.Text = text
+  
+         ButtonCorner.CornerRadius = UDim.new(0, 5)
+         ButtonCorner.Name = "ButtonCorner"
+         ButtonCorner.Parent = Button
+  
+         Button.MouseEnter:Connect(
+            function()
+               TweenService:Create(
+                  Button,
+                  TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                  {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}
+               ):Play()
+            end
+         )
+         Button.MouseLeave:Connect(
+            function()
+               TweenService:Create(
+                  Button,
+                  TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                  {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+               ):Play()
+            end
+         )
+  
+         Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+  
+         Button.MouseButton1Click:Connect(
+            function()
+               pcall(callback)
+               Button.TextSize = 0
+               TweenService:Create(Button, TweenInfo.new(.2, Enum.EasingStyle.Quad), {TextSize = 17}):Play()
+               wait(.2)
+               TweenService:Create(Button, TweenInfo.new(.2, Enum.EasingStyle.Quad), {TextSize = 14}):Play()
+            end
+         )
+      end
+      function ContainerItems:Toggle(text,Default,callback)
+         local Toggled = Default or false
+         local ValueToggle = ValueTogglea or false
+         local Toggle = Instance.new("TextButton")
+         local ToggleCorner = Instance.new("UICorner")
+         local Title = Instance.new("TextLabel")
+         local ToggleFrame = Instance.new("Frame")
+         local ToggleFrameCorner = Instance.new("UICorner")
+         local ToggleFrameRainbow = Instance.new("Frame")
+         local ToggleFrameRainbowCorner = Instance.new("UICorner")
+         local ToggleDot = Instance.new("Frame")
+         local ToggleDotCorner = Instance.new("UICorner")
+         local UIGradient_2 = Instance.new('UIGradient')
+         Toggle.Name = "Toggle"
+         Toggle.Parent = Container
+         Toggle.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Toggle.Position = UDim2.new(-0.747557044, 0, 0.729113936, 0)
+         Toggle.Size = UDim2.new(0, 405, 0, 40)
+         Toggle.AutoButtonColor = false
+         Toggle.Font = Enum.Font.Gotham
+         Toggle.Text = ""
+         Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Toggle.TextSize = 14.000
+  
+         ToggleCorner.CornerRadius = UDim.new(0, 5)
+         ToggleCorner.Name = "ToggleCorner"
+         ToggleCorner.Parent = Toggle
+  
+         Title.Name = "Title"
+         Title.Parent = Toggle
+         Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Title.BackgroundTransparency = 1.000
+         Title.Position = UDim2.new(0.0198511165, 0, 0, 0)
+         Title.Size = UDim2.new(0, 430, 0, 40)
+         Title.Font = Enum.Font.Gotham
+         Title.Text = text
+         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Title.TextSize = 15.000
+         Title.TextXAlignment = Enum.TextXAlignment.Left
+  
+         ToggleFrame.Name = "ToggleFrame"
+         ToggleFrame.Parent = Toggle
+         ToggleFrame.BackgroundColor3 = Color3.fromRGB(22, 23, 27)
+         ToggleFrame.Position = UDim2.new(0.88, 0, 0.21, 0)
+         ToggleFrame.Size = UDim2.new(0, 40, 0, 22)
+  
+         ToggleFrameCorner.CornerRadius = UDim.new(1, 0)
+         ToggleFrameCorner.Name = "ToggleFrameCorner"
+         ToggleFrameCorner.Parent = ToggleFrame
+  
+         ToggleFrameRainbow.Name = "ToggleFrameRainbow"
+         ToggleFrameRainbow.Parent = ToggleFrame
+         ToggleFrameRainbow.BackgroundColor3 = Color3.fromRGB(27,27,27)
+         ToggleFrameRainbow.BackgroundTransparency = 1.000
+         ToggleFrameRainbow.Position = UDim2.new(-0.0198377371, 0, 0.00601506233, 0)
+         ToggleFrameRainbow.Size = UDim2.new(0, 40, 0, 22)
+  
+         ToggleFrameRainbowCorner.CornerRadius = UDim.new(1, 0)
+         ToggleFrameRainbowCorner.Name = "ToggleFrameRainbowCorner"
+         ToggleFrameRainbowCorner.Parent = ToggleFrameRainbow
+  
+         ToggleDot.Name = "ToggleDot"
+         ToggleDot.Parent = ToggleFrameRainbow
+         ToggleDot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         ToggleDot.Position = UDim2.new(0.104999997, -3, 0.289000005, -4)
+         ToggleDot.Size = UDim2.new(0, 16, 0, 16)
+  
+         UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(160, 207, 236)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(102, 152, 255))}
+         UIGradient_2.Parent = ToggleDot
+  
+         ToggleDotCorner.CornerRadius = UDim.new(1, 0)
+         ToggleDotCorner.Name = "ToggleDotCorner"
+         ToggleDotCorner.Parent = ToggleDot
+  
+         Toggle.MouseEnter:Connect(
+            function()
+               TweenService:Create(
+                  Toggle,
+                  TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                  {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}
+               ):Play()
+  
+            end
+         )
+         Toggle.MouseLeave:Connect(
+            function()
+               TweenService:Create(
+                  Toggle,
+                  TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                  {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+               ):Play()
+            end
+         )
+  
+         if Toggled == true then
+          UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(160, 207, 236)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(102, 152, 255))}
+  
+          TweenService:Create(
+             ToggleFrameRainbow,
+             TweenInfo.new(.2, Enum.EasingStyle.Quad),
+             {BackgroundTransparency = 0}
+          ):Play()
+          TweenService:Create(
+             ToggleDot,
+             TweenInfo.new(.2, Enum.EasingStyle.Quad),
+             {Position = UDim2.new(0.595, -3, 0.289000005, -4)}
+          ):Play()
+          pcall(callback, Toggled)
+       else
+          ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(46, 255, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(228, 92, 255))}
+  
+          TweenService:Create(
+             ToggleFrameRainbow,
+             TweenInfo.new(.2, Enum.EasingStyle.Quad),
+             {BackgroundTransparency = 1}
+          ):Play()
+          TweenService:Create(
+             ToggleDot,
+             TweenInfo.new(.2, Enum.EasingStyle.Quad),
+             {Position = UDim2.new(0.104999997, -3, 0.289000005, -4)}
+          ):Play()
+       end
+  
+         Toggle.MouseButton1Click:Connect(
+            function()
+               if Toggled == false then
+                  UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(160, 207, 236)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(102, 152, 255))}
+  
+                  TweenService:Create(
+                     ToggleFrameRainbow,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {BackgroundTransparency = 0}
+                  ):Play()
+                  TweenService:Create(
+                     ToggleDot,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {Position = UDim2.new(0.595, -3, 0.289000005, -4)}
+                  ):Play()
+               else
+                  UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(160, 207, 236)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(102, 152, 255))}
+  
+                  TweenService:Create(
+                     ToggleFrameRainbow,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {BackgroundTransparency = 1}
+                  ):Play()
+                  TweenService:Create(
+                     ToggleDot,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {Position = UDim2.new(0.104999997, -3, 0.289000005, -4)}
+                  ):Play()
+               end
+               Toggled = not Toggled
+               pcall(callback, Toggled)
+            end
+         )
+  
+         Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+      end
+      function ContainerItems:Slider(text, min, max, start, callback)
+         local dragging = false
+         local Slider = Instance.new("TextButton")
+         local Title = Instance.new("TextLabel")
+         local SliderFrame = Instance.new("Frame")
+         local SliderFrameCorner = Instance.new("UICorner")
+         local SliderIndicator = Instance.new("Frame")
+         local SliderIndicatorCorner = Instance.new("UICorner")
+         local SliderCorner = Instance.new("UICorner")
+         local Value = Instance.new("TextLabel")
+         local UIGradient_3 = Instance.new('UIGradient')
+  
+         Slider.Name = "Slider"
+         Slider.Parent = Container
+         Slider.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Slider.Position = UDim2.new(-0.747557044, 0, 0.729113936, 0)
+         Slider.Size = UDim2.new(0, 405, 0, 49)
+         Slider.AutoButtonColor = false
+         Slider.Font = Enum.Font.Gotham
+         Slider.Text = ""
+         Slider.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Slider.TextSize = 14.000
+  
+         Title.Name = "Title"
+         Title.Parent = Slider
+         Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Title.BackgroundTransparency = 1.000
+         Title.Position = UDim2.new(0.0198511165, 0, 0, 0)
+         Title.Size = UDim2.new(0, 192, 0, 28)
+         Title.Font = Enum.Font.Gotham
+         Title.Text = text
+         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Title.TextSize = 14.000
+         Title.TextXAlignment = Enum.TextXAlignment.Left
+  
+         SliderFrame.Name = "SliderFrame"
+         SliderFrame.Parent = Slider
+         SliderFrame.BackgroundColor3 = Color3.fromRGB(29, 29, 29)
+         SliderFrame.Position = UDim2.new(0.0223324299, 0, 0.563266039, 0)
+         SliderFrame.Size = UDim2.new(0, 384, 0, 11)
+  
+         SliderFrameCorner.Name = "SliderFrameCorner"
+         SliderFrameCorner.Parent = SliderFrame
+  
+         SliderIndicator.Name = "SliderIndicator"
+         SliderIndicator.Parent = SliderFrame
+         SliderIndicator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         SliderIndicator.BorderSizePixel = 0
+         SliderIndicator.Position = UDim2.new(-0.00260408712, 0, 0.0363603085, 0)
+         SliderIndicator.Size = UDim2.new((start or 0) / max, 0, 0, 11)
+  
+         UIGradient_3.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(160, 207, 236)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(102, 152, 255))}
+         UIGradient_3.Parent = SliderIndicator
+  
+         SliderIndicatorCorner.Name = "SliderIndicatorCorner"
+         SliderIndicatorCorner.Parent = SliderIndicator
+  
+         SliderCorner.CornerRadius = UDim.new(0, 6)
+         SliderCorner.Name = "SliderCorner"
+         SliderCorner.Parent = Slider
+  
+         Value.Name = "Value"
+         Value.Parent = Slider
+         Value.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Value.BackgroundTransparency = 1.000
+         Value.Position = UDim2.new(0.496277869, 0, 0, 0)
+         Value.Size = UDim2.new(0, 192, 0, 28)
+         Value.Font = Enum.Font.Gotham
+         Value.Text = tostring(start and math.floor((start / max) * (max - min) + min) or 0)
+         Value.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Value.TextSize = 14.000
+         Value.TextXAlignment = Enum.TextXAlignment.Right
+  
+         local function slide(input)
+            local pos =
+               UDim2.new(
+                  math.clamp((input.Position.X - SliderFrame.AbsolutePosition.X) / SliderFrame.AbsoluteSize.X, 0, 1),
+                  0,
+                  0,
+                  11
+               )
+            SliderIndicator:TweenSize(pos, Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.3, true)
+            local val = math.floor(((pos.X.Scale * max) / max) * (max - min) + min)
+            Value.Text = tostring(val)
+            pcall(callback, val)
+         end
+  
+         SliderFrame.InputBegan:Connect(
+            function(input)
+               if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                  slide(input)
+                  dragging = true
+               end
+            end
+         )
+  
+         SliderFrame.InputEnded:Connect(
+            function(input)
+               if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                  dragging = false
+               end
+            end
+         )
+  
+         UserInputService.InputChanged:Connect(
+            function(input)
+               if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                  slide(input)
+               end
+            end
+         )
+  
+         Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+  
+      end
+      function ContainerItems:Dropdown(text, list, callback)
+         local dropfunc = {}
+         local DropToggled = false
+         local FrameSize = 0
+         local ItemCount = 0
+  
+         local Dropdown = Instance.new("TextButton")
+         local Title = Instance.new("TextLabel")
+         local DropdownCorner = Instance.new("UICorner")
+         local Arrow = Instance.new("ImageLabel")
+  
+         Dropdown.Name = "Dropdown"
+         Dropdown.Parent = Container
+         Dropdown.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Dropdown.Position = UDim2.new(-0.747557044, 0, 0.729113936, 0)
+         Dropdown.Size = UDim2.new(0, 405, 0, 45)
+         Dropdown.AutoButtonColor = false
+         Dropdown.Font = Enum.Font.Gotham
+         Dropdown.Text = ""
+         Dropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Dropdown.TextSize = 15.000
+  
+         Title.Name = "Title"
+         Title.Parent = Dropdown
+         Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Title.BackgroundTransparency = 1.000
+         Title.Position = UDim2.new(0.0198511165, 0, 0, 0)
+         Title.Size = UDim2.new(0, 192, 0, 40)
+         Title.Font = Enum.Font.Gotham
+         Title.Text = text
+         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Title.TextSize = 15.000
+         Title.TextXAlignment = Enum.TextXAlignment.Left
+  
+         DropdownCorner.CornerRadius = UDim.new(0, 6)
+         DropdownCorner.Name = "DropdownCorner"
+         DropdownCorner.Parent = Dropdown
+  
+         Arrow.Name = "Arrow"
+         Arrow.Parent = Dropdown
+         Arrow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Arrow.BackgroundTransparency = 1.000
+         Arrow.Position = UDim2.new(0.9, 0, 0.2, 0)
+         Arrow.Size = UDim2.new(0, 27, 0, 27)
+         Arrow.Image = "http://www.roblox.com/asset/?id=6034818372"
+  
+         local DropdownFrame = Instance.new("Frame")
+         local DropdownFrameCorner = Instance.new("UICorner")
+         local DropdownHolder = Instance.new("ScrollingFrame")
+         local DropdownItemLayout = Instance.new("UIListLayout")
+         local DropdownItemHolder = Instance.new("UIPadding")
+  
+         DropdownFrame.Name = "DropdownFrame"
+         DropdownFrame.Parent = Container
+         DropdownFrame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+         DropdownFrame.BorderSizePixel = 0
+         DropdownFrame.Position = UDim2.new(0.334374994, 0, 0.604166687, 0)
+         DropdownFrame.Size = UDim2.new(0, 403, 0, 0)
+         DropdownFrame.Visible = false
+  
+         DropdownFrameCorner.Name = "DropdownFrameCorner"
+         DropdownFrameCorner.Parent = DropdownFrame
+  
+         DropdownHolder.Name = "DropdownHolder"
+         DropdownHolder.Parent = DropdownFrame
+         DropdownHolder.Active = true
+         DropdownHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         DropdownHolder.BackgroundTransparency = 1.000
+         DropdownHolder.BorderSizePixel = 0
+         DropdownHolder.Position = UDim2.new(0.0263156947, 0, 0.00326599111, 0)
+         DropdownHolder.Size = UDim2.new(0, 386, 0, 0)
+         DropdownHolder.ScrollBarThickness = 3
+         DropdownHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+         DropdownHolder.ScrollBarImageColor3 = Color3.fromRGB(48, 48, 48)
+  
+         DropdownItemLayout.Name = "DropdownItemLayout"
+         DropdownItemLayout.Parent = DropdownHolder
+         DropdownItemLayout.SortOrder = Enum.SortOrder.LayoutOrder
+         DropdownItemLayout.Padding = UDim.new(0, 5)
+  
+         DropdownItemHolder.Name = "DropdownItemHolder"
+         DropdownItemHolder.Parent = DropdownHolder
+         DropdownItemHolder.PaddingBottom = UDim.new(0, 5)
+         DropdownItemHolder.PaddingTop = UDim.new(0, 5)
+  
+         Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+  
+         Dropdown.MouseEnter:Connect(
+            function()
+               TweenService:Create(
+                  Dropdown,
+                  TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                  {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}
+               ):Play()
+            end
+         )
+         Dropdown.MouseLeave:Connect(
+            function()
+               TweenService:Create(
+                  Dropdown,
+                  TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                  {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+               ):Play()
+            end
+         )
+  
+         Dropdown.MouseButton1Click:Connect(
+            function()
+               if DropToggled == false then
+                  DropdownFrame.Visible = true
+                  DropdownFrame:TweenSize(
+                     UDim2.new(0, 403, 0, FrameSize),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  DropdownHolder:TweenSize(
+                     UDim2.new(0, 386, 0, FrameSize),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  TweenService:Create(
+                     Arrow,
+                     TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                     {Rotation = 180}
+                  ):Play()
+                  repeat
+                     wait()
+                  until DropdownFrame.Size == UDim2.new(0, 403, 0, FrameSize)
+                  Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+               else
+                  DropdownFrame:TweenSize(
+                     UDim2.new(0, 403, 0, 0),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  DropdownHolder:TweenSize(
+                     UDim2.new(0, 386, 0, 0),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  TweenService:Create(
+                     Arrow,
+                     TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                     {Rotation = 0}
+                  ):Play()
+                  repeat
+                     wait()
+                  until DropdownFrame.Size == UDim2.new(0, 403, 0, 0)
+                  DropdownFrame.Visible = false
+                  Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+               end
+               DropToggled = not DropToggled
+            end
+         )
+  
+         for i, v in next, list do
+            ItemCount = ItemCount + 1
+  
+            if ItemCount == 1 then
+               FrameSize = 39
+            elseif ItemCount == 2 then
+               FrameSize = 69
+            elseif ItemCount >= 3 then
+               FrameSize = 100
+            end
+  
+            local Item = Instance.new("TextButton")
+            local ItemCorner = Instance.new("UICorner")
+  
+            Item.Name = "Item"
+            Item.Parent = DropdownHolder
+            Item.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+            Item.Position = UDim2.new(0, 0, 0.0808080807, 0)
+            Item.Size = UDim2.new(0, 405, 0, 24)
+            Item.AutoButtonColor = false
+            Item.Font = Enum.Font.Gotham
+            Item.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Item.TextSize = 14.000
+            Item.Text = v
+  
+            ItemCorner.Name = "ItemCorner"
+            ItemCorner.Parent = Item
+  
+            Item.MouseEnter:Connect(
+               function()
+                  TweenService:Create(
+                     Item,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
+                  ):Play()
+               end
+            )
+            Item.MouseLeave:Connect(
+               function()
+                  TweenService:Create(
+                     Item,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {BackgroundColor3 = Color3.fromRGB(32, 32, 32)}
+                  ):Play()
+               end
+            )
+  
+            Item.MouseButton1Click:Connect(
+               function()
+                  Title.Text = text .. " - " .. v
+                  pcall(callback, v)
+                  DropToggled = false
+                  DropdownFrame:TweenSize(
+                     UDim2.new(0, 403, 0, 0),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  DropdownHolder:TweenSize(
+                     UDim2.new(0, 386, 0, 0),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  TweenService:Create(
+                     Arrow,
+                     TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                     {Rotation = 0}
+                  ):Play()
+                  repeat
+                     wait()
+                  until DropdownFrame.Size == UDim2.new(0, 403, 0, 0)
+                  DropdownFrame.Visible = false
+                  Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+               end
+            )
+  
+            DropdownHolder.CanvasSize = UDim2.new(0, 0, 0, DropdownItemLayout.AbsoluteContentSize.Y + 15)
+         end
+  
+         function dropfunc:Clear()
+            Title.Text = text
+            FrameSize = 0
+            ItemCount = 0
+  
+            for i,v in next, DropdownHolder:GetChildren() do
+               if v.Name == "Item" then
+                  v:Destroy()
+               end
+            end
+  
+            DropdownFrame:TweenSize(
+               UDim2.new(0, 403, 0, 0),
+               Enum.EasingDirection.Out,
+               Enum.EasingStyle.Quart,
+               0.1,
+               true
+            )
+            DropdownHolder:TweenSize(
+               UDim2.new(0, 386, 0, 0),
+               Enum.EasingDirection.Out,
+               Enum.EasingStyle.Quart,
+               0.1,
+               true
+            )
+            TweenService:Create(
+               Arrow,
+               TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+               {Rotation = 0}
+            ):Play()
+            repeat
+               wait()
+            until DropdownFrame.Size == UDim2.new(0, 403, 0, 0)
+            DropdownFrame.Visible = false
+            Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+         end
+  
+         function dropfunc:Add(toadd)
+            ItemCount = ItemCount + 1
+  
+            if ItemCount == 1 then
+               FrameSize = 39
+            elseif ItemCount == 2 then
+               FrameSize = 69
+            elseif ItemCount >= 3 then
+               FrameSize = 100
+            end
+  
+            local Item = Instance.new("TextButton")
+            local ItemCorner = Instance.new("UICorner")
+  
+            Item.Name = "Item"
+            Item.Parent = DropdownHolder
+            Item.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+            Item.Position = UDim2.new(0, 0, 0.0808080807, 0)
+            Item.Size = UDim2.new(0, 405, 0, 24)
+            Item.AutoButtonColor = false
+            Item.Font = Enum.Font.Gotham
+            Item.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Item.TextSize = 14.000
+            Item.Text = toadd
+  
+            ItemCorner.Name = "ItemCorner"
+            ItemCorner.Parent = Item
+  
+            Item.MouseEnter:Connect(
+               function()
+                  TweenService:Create(
+                     Item,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
+                  ):Play()
+               end
+            )
+            Item.MouseLeave:Connect(
+               function()
+                  TweenService:Create(
+                     Item,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {BackgroundColor3 = Color3.fromRGB(32, 32, 32)}
+                  ):Play()
+               end
+            )
+  
+            Item.MouseButton1Click:Connect(
+               function()
+                  Title.Text = text .. " - " .. toadd
+                  pcall(callback, toadd)
+                  DropToggled = false
+                  DropdownFrame:TweenSize(
+                     UDim2.new(0, 403, 0, 0),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  DropdownHolder:TweenSize(
+                     UDim2.new(0, 386, 0, 0),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  TweenService:Create(
+                     Arrow,
+                     TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                     {Rotation = 0}
+                  ):Play()
+                  repeat
+                     wait()
+                  until DropdownFrame.Size == UDim2.new(0, 403, 0, 0)
+                  DropdownFrame.Visible = false
+                  Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+               end
+            )
+  
+            DropdownHolder.CanvasSize = UDim2.new(0, 0, 0, DropdownItemLayout.AbsoluteContentSize.Y + 15)
+         end
+  
+         return dropfunc
+      end
+      function ContainerItems:Colorpicker(text, preset, callback)
+         local ColorPickerToggled = false
+         local OldToggleColor = Color3.fromRGB(0, 0, 0)
+         local OldColor = Color3.fromRGB(0, 0, 0)
+         local OldColorSelectionPosition = nil
+         local OldHueSelectionPosition = nil
+         local ColorH, ColorS, ColorV = 1, 1, 1
+         local RainbowColorPicker = false
+         local ColorPickerInput = nil
+         local ColorInput = nil
+         local HueInput = nil
+  
+         local Colorpicker = Instance.new("TextButton")
+         local Title = Instance.new("TextLabel")
+         local BoxColor = Instance.new("Frame")
+         local BoxcolorCorner = Instance.new("UICorner")
+         local ColorpickerCorner = Instance.new("UICorner")
+  
+         Colorpicker.Name = "Colorpicker"
+         Colorpicker.Parent = Container
+         Colorpicker.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Colorpicker.Position = UDim2.new(-0.747557044, 0, 0.729113936, 0)
+         Colorpicker.Size = UDim2.new(0, 405, 0, 40)
+         Colorpicker.AutoButtonColor = false
+         Colorpicker.Font = Enum.Font.Gotham
+         Colorpicker.Text = ""
+         Colorpicker.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Colorpicker.TextSize = 14.000
+  
+         Title.Name = "Title"
+         Title.Parent = Colorpicker
+         Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Title.BackgroundTransparency = 1.000
+         Title.Position = UDim2.new(0.0198511165, 0, 0, 0)
+         Title.Size = UDim2.new(0, 405, 0, 40)
+         Title.Font = Enum.Font.Gotham
+         Title.Text = text
+         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Title.TextSize = 15.000
+         Title.TextXAlignment = Enum.TextXAlignment.Left
+  
+         BoxColor.Name = "Boxcolor"
+         BoxColor.Parent = Colorpicker
+         BoxColor.BackgroundColor3 = preset
+         BoxColor.Position = UDim2.new(0.88, 0, 0.3, 0)
+         BoxColor.Size = UDim2.new(0, 36, 0, 19)
+  
+         BoxcolorCorner.CornerRadius = UDim.new(0, 6)
+         BoxcolorCorner.Name = "BoxcolorCorner"
+         BoxcolorCorner.Parent = BoxColor
+  
+         ColorpickerCorner.CornerRadius = UDim.new(0, 4)
+         ColorpickerCorner.Name = "ColorpickerCorner"
+         ColorpickerCorner.Parent = Colorpicker
+  
+         local ColorpickerFrame = Instance.new("Frame")
+         local DropdownFrameCorner = Instance.new("UICorner")
+         local Hue = Instance.new("ImageLabel")
+         local HueCorner = Instance.new("UICorner")
+         local HueGradient = Instance.new("UIGradient")
+         local HueSelection = Instance.new("ImageLabel")
+         local Color = Instance.new("ImageLabel")
+         local ColorCorner = Instance.new("UICorner")
+         local ColorSelection = Instance.new("ImageLabel")
+         local Confirm = Instance.new("TextButton")
+         local ButtonCorner = Instance.new("UICorner")
+         local RainbowToggle = Instance.new("TextButton")
+         local RainbowToggleCorner = Instance.new("UICorner")
+         local RainbowTitle = Instance.new("TextLabel")
+         local RainbowToggleFrame = Instance.new("Frame")
+         local RainbowToggleFrameCorner = Instance.new("UICorner")
+         local RainbowToggleFrameRainbow = Instance.new("Frame")
+         local RainbowToggleFrameRainbowCorner = Instance.new("UICorner")
+         local RainbowToggleDot = Instance.new("Frame")
+         local RainbowToggleDotCorner = Instance.new("UICorner")
+  
+         ColorpickerFrame.Name = "ColorpickerFrame"
+         ColorpickerFrame.Parent = Container
+         ColorpickerFrame.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+         ColorpickerFrame.BorderSizePixel = 0
+         ColorpickerFrame.Position = UDim2.new(0.165624991, 0, 0.671052635, 0)
+         ColorpickerFrame.Size = UDim2.new(0, 403, 0, 0)
+         ColorpickerFrame.Visible = false
+         ColorpickerFrame.ClipsDescendants = true
+  
+         DropdownFrameCorner.Name = "DropdownFrameCorner"
+         DropdownFrameCorner.Parent = ColorpickerFrame
+  
+         Hue.Name = "Hue"
+         Hue.Parent = ColorpickerFrame
+         Hue.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Hue.Position = UDim2.new(0, 209, 0, 9)
+         Hue.Size = UDim2.new(0, 25, 0, 80)
+  
+         HueCorner.CornerRadius = UDim.new(0, 3)
+         HueCorner.Name = "HueCorner"
+         HueCorner.Parent = Hue
+  
+         HueGradient.Color =
+            ColorSequence.new {
+               ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 4)),
+               ColorSequenceKeypoint.new(0.20, Color3.fromRGB(234, 255, 0)),
+               ColorSequenceKeypoint.new(0.40, Color3.fromRGB(21, 255, 0)),
+               ColorSequenceKeypoint.new(0.60, Color3.fromRGB(0, 255, 255)),
+               ColorSequenceKeypoint.new(0.80, Color3.fromRGB(0, 17, 255)),
+               ColorSequenceKeypoint.new(0.90, Color3.fromRGB(255, 0, 251)),
+               ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 4))
+            }
+         HueGradient.Rotation = 270
+         HueGradient.Name = "HueGradient"
+         HueGradient.Parent = Hue
+  
+         HueSelection.Name = "HueSelection"
+         HueSelection.Parent = Hue
+         HueSelection.AnchorPoint = Vector2.new(0.5, 0.5)
+         HueSelection.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         HueSelection.BackgroundTransparency = 1.000
+         HueSelection.Position = UDim2.new(0.48, 0, 1 - select(1, Color3.toHSV(preset)))
+         HueSelection.Size = UDim2.new(0, 18, 0, 18)
+         HueSelection.Image = "http://www.roblox.com/asset/?id=4805639000"
+  
+         Color.Name = "Color"
+         Color.Parent = ColorpickerFrame
+         Color.BackgroundColor3 = Color3.fromRGB(255, 0, 4)
+         Color.Position = UDim2.new(0, 9, 0, 9)
+         Color.Size = UDim2.new(0, 194, 0, 80)
+         Color.ZIndex = 10
+         Color.Image = "rbxassetid://4155801252"
+  
+         ColorCorner.CornerRadius = UDim.new(0, 3)
+         ColorCorner.Name = "ColorCorner"
+         ColorCorner.Parent = Color
+  
+         ColorSelection.Name = "ColorSelection"
+         ColorSelection.Parent = Color
+         ColorSelection.AnchorPoint = Vector2.new(0.5, 0.5)
+         ColorSelection.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         ColorSelection.BackgroundTransparency = 1.000
+         ColorSelection.Position = UDim2.new(preset and select(3, Color3.toHSV(preset)))
+         ColorSelection.Size = UDim2.new(0, 18, 0, 18)
+         ColorSelection.Image = "http://www.roblox.com/asset/?id=4805639000"
+         ColorSelection.ScaleType = Enum.ScaleType.Fit
+  
+         Confirm.Name = "Confirm"
+         Confirm.Parent = ColorpickerFrame
+         Confirm.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+         Confirm.BackgroundTransparency = 0.010
+         Confirm.Position = UDim2.new(0.612244904, 0, 0.0900000036, 0)
+         Confirm.Size = UDim2.new(0, 145, 0, 27)
+         Confirm.AutoButtonColor = false
+         Confirm.Font = Enum.Font.Gotham
+         Confirm.Text = "Confirm"
+         Confirm.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Confirm.TextSize = 14.000
+  
+         ButtonCorner.Name = "ButtonCorner"
+         ButtonCorner.Parent = Confirm
+  
+         RainbowToggle.Name = "RainbowToggle"
+         RainbowToggle.Parent = ColorpickerFrame
+         RainbowToggle.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+         RainbowToggle.Position = UDim2.new(0.610732794, 0, 0.431324542, 0)
+         RainbowToggle.Size = UDim2.new(0, 145, 0, 27)
+         RainbowToggle.AutoButtonColor = false
+         RainbowToggle.Font = Enum.Font.Gotham
+         RainbowToggle.Text = ""
+         RainbowToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+         RainbowToggle.TextSize = 14.000
+  
+         RainbowToggleCorner.Name = "RainbowToggleCorner"
+         RainbowToggleCorner.Parent = RainbowToggle
+  
+         RainbowTitle.Name = "RainbowTitle"
+         RainbowTitle.Parent = RainbowToggle
+         RainbowTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         RainbowTitle.BackgroundTransparency = 1.000
+         RainbowTitle.Position = UDim2.new(0.0204080511, 0, 0, 0)
+         RainbowTitle.Size = UDim2.new(0, 29, 0, 27)
+         RainbowTitle.Font = Enum.Font.Gotham
+         RainbowTitle.Text = "Rainbow"
+         RainbowTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+         RainbowTitle.TextSize = 14.000
+         RainbowTitle.TextXAlignment = Enum.TextXAlignment.Left
+  
+         RainbowToggleFrame.Name = "RainbowToggleFrame"
+         RainbowToggleFrame.Parent = RainbowToggle
+         RainbowToggleFrame.BackgroundColor3 = Color3.fromRGB(22, 23, 27)
+         RainbowToggleFrame.Position = UDim2.new(0.693, 0, 0.142857149, 0)
+         RainbowToggleFrame.Size = UDim2.new(0, 36, 0, 19)
+  
+         RainbowToggleFrameCorner.CornerRadius = UDim.new(1, 0)
+         RainbowToggleFrameCorner.Name = "RainbowToggleFrameCorner"
+         RainbowToggleFrameCorner.Parent = RainbowToggleFrame
+  
+         RainbowToggleFrameRainbow.Name = "RainbowToggleFrameRainbow"
+         RainbowToggleFrameRainbow.Parent = RainbowToggleFrame
+         RainbowToggleFrameRainbow.BackgroundColor3 = Color3.fromRGB(67,136,246)
+         RainbowToggleFrameRainbow.BackgroundTransparency = 1.000
+         RainbowToggleFrameRainbow.Position = UDim2.new(-0.0198377371, 0, 0.00601506233, 0)
+         RainbowToggleFrameRainbow.Size = UDim2.new(0, 36, 0, 19)
+  
+         RainbowToggleFrameRainbowCorner.CornerRadius = UDim.new(1, 0)
+         RainbowToggleFrameRainbowCorner.Name = "RainbowToggleFrameRainbowCorner"
+         RainbowToggleFrameRainbowCorner.Parent = RainbowToggleFrameRainbow
+  
+         RainbowToggleDot.Name = "RainbowToggleDot"
+         RainbowToggleDot.Parent = RainbowToggleFrameRainbow
+         RainbowToggleDot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         RainbowToggleDot.Position = UDim2.new(0.104999997, -3, 0.289000005, -4)
+         RainbowToggleDot.Size = UDim2.new(0, 16, 0, 16)
+  
+         RainbowToggleDotCorner.CornerRadius = UDim.new(1, 0)
+         RainbowToggleDotCorner.Name = "RainbowToggleDotCorner"
+         RainbowToggleDotCorner.Parent = RainbowToggleDot
+  
+         Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+  
+         Colorpicker.MouseEnter:Connect(
+            function()
+               TweenService:Create(
+                  Colorpicker,
+                  TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                  {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}
+               ):Play()
+            end
+         )
+         Colorpicker.MouseLeave:Connect(
+            function()
+               TweenService:Create(
+                  Colorpicker,
+                  TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                  {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}
+               ):Play()
+            end
+         )
+  
+         local function UpdateColorPicker(nope)
+            BoxColor.BackgroundColor3 = Color3.fromHSV(ColorH, ColorS, ColorV)
+            Color.BackgroundColor3 = Color3.fromHSV(ColorH, 1, 1)
+  
+            pcall(callback, BoxColor.BackgroundColor3)
+         end
+  
+         ColorH =
+            1 -
+            (math.clamp(HueSelection.AbsolutePosition.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) /
+               Hue.AbsoluteSize.Y)
+         ColorS =
+            (math.clamp(ColorSelection.AbsolutePosition.X - Color.AbsolutePosition.X, 0, Color.AbsoluteSize.X) /
+               Color.AbsoluteSize.X)
+         ColorV =
+            1 -
+            (math.clamp(ColorSelection.AbsolutePosition.Y - Color.AbsolutePosition.Y, 0, Color.AbsoluteSize.Y) /
+               Color.AbsoluteSize.Y)
+  
+         BoxColor.BackgroundColor3 = preset
+         Color.BackgroundColor3 = preset
+         pcall(callback, BoxColor.BackgroundColor3)
+  
+         Color.InputBegan:Connect(
+            function(input)
+               if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                  if RainbowColorPicker then
+                     return
+                  end
+  
+                  if ColorInput then
+                     ColorInput:Disconnect()
+                  end
+  
+                  ColorInput =
+                     RunService.RenderStepped:Connect(
+                        function()
+                        local ColorX =
+                           (math.clamp(Mouse.X - Color.AbsolutePosition.X, 0, Color.AbsoluteSize.X) /
+                              Color.AbsoluteSize.X)
+                        local ColorY =
+                           (math.clamp(Mouse.Y - Color.AbsolutePosition.Y, 0, Color.AbsoluteSize.Y) /
+                              Color.AbsoluteSize.Y)
+  
+                        ColorSelection.Position = UDim2.new(ColorX, 0, ColorY, 0)
+                        ColorS = ColorX
+                        ColorV = 1 - ColorY
+  
+                        UpdateColorPicker(true)
+                     end
+                     )
+               end
+            end
+         )
+  
+         Color.InputEnded:Connect(
+            function(input)
+               if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                  if ColorInput then
+                     ColorInput:Disconnect()
+                  end
+               end
+            end
+         )
+  
+         Hue.InputBegan:Connect(
+            function(input)
+               if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                  if RainbowColorPicker then
+                     return
+                  end
+  
+                  if HueInput then
+                     HueInput:Disconnect()
+                  end
+  
+                  HueInput =
+                     RunService.RenderStepped:Connect(
+                        function()
+                        local HueY =
+                           (math.clamp(Mouse.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) /
+                              Hue.AbsoluteSize.Y)
+  
+                        HueSelection.Position = UDim2.new(0.48, 0, HueY, 0)
+                        ColorH = 1 - HueY
+  
+                        UpdateColorPicker(true)
+                     end
+                     )
+               end
+            end
+         )
+  
+         Hue.InputEnded:Connect(
+            function(input)
+               if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                  if HueInput then
+                     HueInput:Disconnect()
+                  end
+               end
+            end
+         )
+  
+         RainbowToggle.MouseButton1Down:Connect(
+            function()
+               RainbowColorPicker = not RainbowColorPicker
+  
+               if ColorInput then
+                  ColorInput:Disconnect()
+               end
+  
+               if HueInput then
+                  HueInput:Disconnect()
+               end
+  
+               if RainbowColorPicker then
+                  TweenService:Create(
+                     RainbowToggleFrameRainbow,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {BackgroundTransparency = 0}
+                  ):Play()
+                  TweenService:Create(
+                     RainbowToggleDot,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {Position = UDim2.new(0.595, -3, 0.289000005, -4)}
+                  ):Play()
+  
+                  OldToggleColor = BoxColor.BackgroundColor3
+                  OldColor = Color.BackgroundColor3
+                  OldColorSelectionPosition = ColorSelection.Position
+                  OldHueSelectionPosition = HueSelection.Position
+  
+                  while RainbowColorPicker do
+                     BoxColor.BackgroundColor3 = Color3.fromHSV(VLib.RainbowColorValue, 1, 1)
+                     Color.BackgroundColor3 = Color3.fromHSV(VLib.RainbowColorValue, 1, 1)
+  
+                     ColorSelection.Position = UDim2.new(1, 0, 0, 0)
+                     HueSelection.Position = UDim2.new(0.48, 0, 0, VLib.HueSelectionPosition)
+  
+                     pcall(callback, BoxColor.BackgroundColor3)
+                     wait()
+                  end
+               elseif not RainbowColorPicker then
+                  TweenService:Create(
+                     RainbowToggleFrameRainbow,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {BackgroundTransparency = 1}
+                  ):Play()
+                  TweenService:Create(
+                     RainbowToggleDot,
+                     TweenInfo.new(.2, Enum.EasingStyle.Quad),
+                     {Position = UDim2.new(0.104999997, -3, 0.289000005, -4)}
+                  ):Play()
+  
+                  BoxColor.BackgroundColor3 = OldToggleColor
+                  Color.BackgroundColor3 = OldColor
+  
+                  ColorSelection.Position = OldColorSelectionPosition
+                  HueSelection.Position = OldHueSelectionPosition
+  
+                  pcall(callback, BoxColor.BackgroundColor3)
+               end
+            end
+         )
+  
+         Colorpicker.MouseButton1Click:Connect(
+            function()
+               if ColorPickerToggled == false then
+                  ColorPickerToggled = not ColorPickerToggled
+                  ColorpickerFrame.Visible = true
+                  ColorpickerFrame:TweenSize(
+                     UDim2.new(0, 403, 0, 100),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  repeat
+                     wait()
+                  until ColorpickerFrame.Size == UDim2.new(0, 403, 0, 100)
+                  Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+               else
+                  ColorPickerToggled = not ColorPickerToggled
+                  ColorpickerFrame:TweenSize(
+                     UDim2.new(0, 403, 0, 0),
+                     Enum.EasingDirection.Out,
+                     Enum.EasingStyle.Quart,
+                     0.1,
+                     true
+                  )
+                  repeat
+                     wait()
+                  until ColorpickerFrame.Size == UDim2.new(0, 403, 0, 0)
+                  ColorpickerFrame.Visible = false
+                  Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+               end
+            end
+         )
+  
+         Confirm.MouseButton1Click:Connect(
+            function()
+               ColorPickerToggled = not ColorPickerToggled
+               ColorpickerFrame:TweenSize(
+                  UDim2.new(0, 403, 0, 0),
+                  Enum.EasingDirection.Out,
+                  Enum.EasingStyle.Quart,
+                  0.1,
+                  true
+               )
+               repeat
+                  wait()
+               until ColorpickerFrame.Size == UDim2.new(0, 403, 0, 0)
+               ColorpickerFrame.Visible = false
+               Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+            end)
+  
+         coroutine.wrap(
+            function()
+               while wait() do
+  
+               end
+            end
+         )()
+      end
+      function ContainerItems:Label(text)
+         local labelfunc = {}
+         local Label = Instance.new("TextButton")
+         local LabelCorner = Instance.new("UICorner")
+  
+         Label.Name = "Label"
+         Label.Parent = Container
+         Label.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Label.Size = UDim2.new(0, 405, 0, 40)
+         Label.AutoButtonColor = false
+         Label.Font = Enum.Font.Gotham
+         Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Label.TextSize = 17.000
+         Label.Text = text
+  
+         LabelCorner.CornerRadius = UDim.new(0, 5)
+         LabelCorner.Name = "LabelCorner"
+         LabelCorner.Parent = Label
+  
+         Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+  
+         function labelfunc:Refresh(tochange)
+            Label.Text = tochange
+         end
+  
+         return labelfunc
+      end
+  
+      function ContainerItems:line()
+         local labelfunc = {}
+         local Label = Instance.new("TextButton")
+         local LabelCorner = Instance.new("UICorner")
+  
+         Label.Name = "Label"
+         Label.Parent = Container
+         Label.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Label.Size = UDim2.new(0, 405, 0, 5)
+         Label.AutoButtonColor = false
+         Label.Font = Enum.Font.Gotham
+         Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Label.TextSize = 17.000
+         Label.Text = ""
+  
+         LabelCorner.CornerRadius = UDim.new(0, 5)
+         LabelCorner.Name = "LabelCorner"
+         LabelCorner.Parent = Label
+  
+         Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+  
+         function labelfunc:Refresh(tochange)
+            Label.Text = tochange
+         end
+  
+         return labelfunc
+      end
+  
+      function ContainerItems:Bind(Title, keybind_options, callback)
+         local keybind_data = {}
+  
+         local Keybind = Instance.new("TextButton")
+         local Title = Instance.new("TextLabel")
+         local KeybindFrame = Instance.new("Frame")
+         local KeybindFrameCorner = Instance.new("UICorner")
+         local TextButton = Instance.new("TextButton")
+         local KeybindCorner = Instance.new("UICorner")
+         local ContainerLayout = Instance.new("UIListLayout")
+  
+  
+         Keybind.Name = "Keybind"
+         Keybind.Parent = Container
+         Keybind.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Keybind.Position = UDim2.new(-0.747557044, 0, 0.729113936, 0)
+         Keybind.Size = UDim2.new(0, 405, 0, 40)
+         Keybind.AutoButtonColor = false
+         Keybind.Font = Enum.Font.Gotham
+         Keybind.Text = ""
+         Keybind.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Keybind.TextSize = 14.000
+  
+         Title.Name = "Title"
+         Title.Parent = Keybind
+         Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Title.BackgroundTransparency = 1.000
+         Title.Position = UDim2.new(0.0198511165, 0, 0, 0)
+         Title.Size = UDim2.new(0, 405, 0, 40)
+         Title.Font = Enum.Font.Gotham
+         Title.Text = "Keybind"
+         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Title.TextSize = 15.000
+         Title.TextXAlignment = Enum.TextXAlignment.Left
+  
+         KeybindFrame.Name = "KeybindFrame"
+         KeybindFrame.Parent = Keybind
+         KeybindFrame.BackgroundColor3 = Color3.fromRGB(56, 56, 56)
+         KeybindFrame.Position = UDim2.new(0.650124013, 0, 0.159999996, 0)
+         KeybindFrame.Size = UDim2.new(0, 134, 0, 24)
+  
+         KeybindFrameCorner.CornerRadius = UDim.new(0, 6)
+         KeybindFrameCorner.Name = "KeybindFrameCorner"
+         KeybindFrameCorner.Parent = KeybindFrame
+  
+         TextButton.Parent = KeybindFrame
+         TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         TextButton.BackgroundTransparency = 1.000
+         TextButton.Size = UDim2.new(0, 134, 0, 23)
+         TextButton.Font = Enum.Font.Gotham
+         TextButton.Text = "Keybind"
+         TextButton.TextColor3 = Color3.fromRGB(178, 178, 178)
+         TextButton.TextSize = 15.000
+  
+         KeybindCorner.CornerRadius = UDim.new(0, 6)
+         KeybindCorner.Name = "KeybindCorner"
+         KeybindCorner.Parent = Keybind
+  
+         ContainerLayout.Name = "ContainerLayout"
+         ContainerLayout.Parent = Container
+         ContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+         ContainerLayout.Padding = UDim.new(0, 15)
+  
+         local UIS = game:GetService('UserInputService')
+  
+  
+         keybind_name = tostring(keybind_name or "New Keybind")
+         callback = typeof(callback) == "function" and callback or function()end
+         keybind_options = typeof(keybind_options) == "table" and keybind_options or {}
+         keybind_options = {
+            ["standard"] = keybind_options.standard or Enum.KeyCode.RightShift,
+         }
+  
+  
+  
+         callback = typeof(callback) == "function" and callback or function()end
+         keybind_options = typeof(keybind_options) == "table" and keybind_options or {}
+         keybind_options = {
+            ["standard"] = keybind_options.standard or Enum.KeyCode.RightShift,
+         }
+  
+         local shortkeys = {  --thanks to stroketon for helping me out with this
+            RightControl = 'RightCtrl',
+            LeftControl = 'LeftCtrl',
+            LeftShift = 'LShift',
+            RightShift = 'RShift',
+            MouseButton1 = "Mouse1",
+            MouseButton2 = "Mouse2"
+         }
+         local checks = {
+            binding = false,
+  
+         }
+         function keybind_data:SetKeybind(Keybind)
+            local key = shortkeys[Keybind.Name] or Keybind.Name
+            TextButton.Text = key
+            keybind = Keybind
+         end
+  
+         UIS.InputBegan:Connect(function(a, b)
+            if checks.binding then
+               spawn(function()
+                  wait()
+                  checks.binding = false
+               end)
+               return
+            end
+            if a.KeyCode == keybind and not b then
+               pcall(callback, keybind)
+            end
+         end)
+  
+         keybind_data:SetKeybind(keybind_options.standard)
+  
+         TextButton.MouseButton1Click:Connect(function()
+            if checks.binding then return end
+            TextButton.Text = "..."
+            checks.binding = true
+            local a, b = UIS.InputBegan:Wait()
+            keybind_data:SetKeybind(a.KeyCode)
+         end)
+         return keybind_data
+      end
+  
+  
+      function ContainerItems:Textbox(text, disapper, callback)
+         local Textbox = Instance.new("TextButton")
+         local Title = Instance.new("TextLabel")
+         local TextboxFrame = Instance.new("Frame")
+         local TextboxFrameCorner = Instance.new("UICorner")
+         local TextBox = Instance.new("TextBox")
+         local TextboxCorner = Instance.new("UICorner")
+  
+         Textbox.Name = "Textbox"
+         Textbox.Parent = Container
+         Textbox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+         Textbox.Position = UDim2.new(-0.747557044, 0, 0.729113936, 0)
+         Textbox.Size = UDim2.new(0, 405, 0, 40)
+         Textbox.AutoButtonColor = false
+         Textbox.Font = Enum.Font.Gotham
+         Textbox.Text = ""
+         Textbox.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Textbox.TextSize = 14.000
+  
+         Title.Name = "Title"
+         Title.Parent = Textbox
+         Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         Title.BackgroundTransparency = 1.000
+         Title.Position = UDim2.new(0.0198511165, 0, 0, 0)
+         Title.Size = UDim2.new(0, 405, 0, 40)
+         Title.Font = Enum.Font.Gotham
+         Title.Text = text
+         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+         Title.TextSize = 15.000
+         Title.TextXAlignment = Enum.TextXAlignment.Left
+  
+         TextboxFrame.Name = "TextboxFrame"
+         TextboxFrame.Parent = Textbox
+         TextboxFrame.BackgroundColor3 = Color3.fromRGB(56, 56, 56)
+         TextboxFrame.Position = UDim2.new(0.650124013, 0, 0.16, 0)
+         TextboxFrame.Size = UDim2.new(0, 134, 0, 24)
+  
+         TextboxFrameCorner.CornerRadius = UDim.new(0, 6)
+         TextboxFrameCorner.Name = "TextboxFrameCorner"
+         TextboxFrameCorner.Parent = TextboxFrame
+  
+         TextBox.Parent = TextboxFrame
+         TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+         TextBox.BackgroundTransparency = 1.000
+         TextBox.Size = UDim2.new(0, 134, 0, 19)
+         TextBox.Font = Enum.Font.Gotham
+         TextBox.Text = ""
+         TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+         TextBox.TextSize = 15.000
+  
+         TextboxCorner.CornerRadius = UDim.new(0, 6)
+         TextboxCorner.Name = "TextboxCorner"
+         TextboxCorner.Parent = Textbox
+  
+         TextBox.FocusLost:Connect(
+            function(ep)
+               if ep then
+                  if #TextBox.Text > 0 then
+                     pcall(callback, TextBox.Text)
+                     if disapper then
+                        TextBox.Text = ""
+                     end
+                  end
+               end
+            end
+         )
+  
+         Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
+      end
+      return ContainerItems
+   end
+   return Tabs
+  end
+
+  local Library = require(game:GetService("ReplicatedStorage").Framework.Library)
+local IDToName = {}
+local NameToID = {}
+for i,v in pairs(Library.Directory.Pets ) do
+    IDToName[i] = v.name
+    NameToID[v.name] = i
+end
+
+function GetMyPets()
+       local returntable = {}
+       for i,v in pairs(GameLibrary.Save.Get().Pets) do
+           if v.e then 
+               table.insert(returntable, v.uid)
+           end
+       end
+       return returntable
+    end
+
+function GetPets()
+        local MyPets = {}
+        for i,v in pairs(GameLibrary.Save.Get().Pets) do
+            --if (not _G.AllowMythicals) or (_G.AllowMythicals and (PettoRarity[v.id] ~= 'Mythical' and PettoRarity[v.id] ~= 'Exclusive' and not string.find(IDToName[v.id]:lower(), "maskot"))) then
+                local ThingyThingyTempTypeThing = (v.g and 'Gold') or (v.r and 'Rainbow') or (v.dm and 'Dark Matter') or 'Normal'
+                local TempString = ThingyThingyTempTypeThing .. IDToName[v.id]
+                if MyPets[TempString] then
+                    table.insert(MyPets[TempString], v.uid)
+                else
+                    MyPets[TempString] = {}
+                    table.insert(MyPets[TempString], v.uid)
+                end
+            --end
+        end
+        return MyPets
+    end
+
+    function FarmCoin(CoinID, PetID)
+        game.workspace['__THINGS']['__REMOTES']["join coin"]:InvokeServer({[1] = CoinID, [2] = {[1] = PetID}})
+        game.workspace['__THINGS']['__REMOTES']["farm coin"]:FireServer({[1] = CoinID, [2] = PetID})
+    end
+
+
+
+
+
+
+
+   local Win = VLib:Window("Manahub", "Pet Simulator X")
+   local Autofarm = Win:Tab("AutoFarm")
+   local Autofarm2 = Win:Tab("Gem Farm")
+   local Troll = Win:Tab("Troll stuff")
+   local Misc = Win:Tab("Misc")
+   local AutoOpenF = Win:Tab("Eggs")
+   local pets2 = Win:Tab("Pets")
+   local u = Win:Tab("Credits")
+
+   local pathToScript = game.Players.LocalPlayer.PlayerScripts.Scripts.Game['Open Eggs']
+local oldFunc = getsenv(pathToScript).OpenEgg
+
+   AutoOpenF:Toggle("Remove egg opening animation", false, function(delanimation)
+    if delanimation == true then 
+        getsenv(pathToScript).OpenEgg = function() return end 
+    else
+        getsenv(pathToScript).OpenEgg = oldFunc
+    end 
+end)
+
+   Misc:Slider("Walk Speed", 0, 250, 16, function(v)
+   
+   game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v
+   
+   end)
+   
+   Misc:Slider("Jump Power", 0, 250, 16, function(v)
+   
+       game.Players.LocalPlayer.Character.Humanoid.JumpPower = v
+       
+       end)
+
+       Misc:Toggle("Auto Equip Best Pets", false, function(t)
+        getgenv().BestPet = t
+        while wait() do
+            if getgenv().BestPet == true then
+        pcall(function()
+local args = {
+    [1] = {}
+}
+workspace.__THINGS.__REMOTES:FindFirstChild("equip best pets"):InvokeServer(unpack(args))
+        end)
+    end
+end
+       end)
+   
+       Misc:Toggle("Anti Afk", true,function(vu)
+   
+        local vu = game:GetService("VirtualUser")
+        game:GetService("Players").LocalPlayer.Idled:connect(function()
+           vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+           wait(1)
+           vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+        end)
+       end)
+       Misc:Toggle("Noclip", false, function(v)
+       
+           if state then
+   
+               noclip = false
+               game:GetService('RunService').Stepped:connect(function()
+               if noclip then
+               game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+               end
+               end)
+   
+           else
+   
+               noclip = not noclip
+   game:GetService('RunService').Stepped:connect(function()
+   if noclip then
+   game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+   end
+   end)
+           print(t)
+           end
+       end)
+   
+       Misc:Button("Get Some Gamepasses :)", function()
+       
+           local gmppath = require(game:GetService("ReplicatedStorage").Framework.Modules.Client["5 | Gamepasses"])
+           gmppath.Owns = function() return true end
+       
+       end)
+   
+   
+   u:Button("Mana#9724", function()
+   
+       setclipboard("https://discord.gg/NSJKdznY3M")
+       
+   end) 
+   u:Button("Copy Discord Server",function()
+       setclipboard("https://discord.gg/NSJKdznY3M")
+   end)
+   
+   Autofarm:Toggle("Autofarm", false, function(state)
+       if state then
+        getgenv().speed= false;
+        
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Mana42138/hai/main/wadwas",true))()
+               else
+                getgenv().speed= true
+                
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Mana42138/hai/main/wadwas",true))()
+               end
+   end)
+   Autofarm:line()
+   Autofarm:Label("Note: if number is high its slower")
+
+   Autofarm:Slider("Select Autofarm speed [Testing]", 1, 1000, 1, function(pog)
+    if pog then
+       _G.SelectSpeed = pog
+    end
+end)
+
+   Autofarm:Toggle("Autofarm2 [Testing]", false, function(state)
+    if state then
+        getgenv().speed= _G.SelectSpeed
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Mana42138/hai/main/wadwas",true))()
+               else
+                getgenv().speed=true
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Mana42138/hai/main/wadwas",true))()
+               end
+               getgenv().Speedfarm = state
+               while task.wait() do
+if getgenv().Speedfarm == true then
+    local args = {
+        [1] = {}
+    }
+    workspace.__THINGS.__REMOTES:FindFirstChild("equip best pets"):InvokeServer(unpack(args))
+end
+               end
+end)
+   
+   Autofarm:Toggle("Fast AutoCollect Coins", false, function(t)
+    fastcollect = t
+    while fastcollect do task.wait()
+    pcall(function()
+            for i,v in pairs(game:GetService("Workspace")["__THINGS"].Orbs:GetChildren()) do
+                v.CanCollide = false
+                v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0,0,0)
+            end
+    end)
+end
+           end)
+   
+   Autofarm:Toggle("Auto Redeam Rank Rewards", false, function(q)
+       getgenv().whaaat = q
+                       while wait(.3) do
+                           if getgenv().whaaat == true then
+   
+   
+   local args = {
+       [1] = {}
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("redeem rank rewards"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   Autofarm:Toggle("Auto Use Triple Damage Boost", false, function(state)
+       if state then
+           function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+   
+   local args = {
+       [1] = {
+           [1] = "Triple Damage"
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("activate boost"):FireServer(unpack(args))
+   
+           getgenv().hahj = true;
+           
+           while wait(1200) do
+               if getgenv().hahj == true then
+           function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+   
+   local args = {
+       [1] = {
+           [1] = "Triple Damage"
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("activate boost"):FireServer(unpack(args))
+   
+           end
+           end
+               else
+                   function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+   
+   local args = {
+       [1] = {
+           [1] = "Triple Damage"
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("activate boost"):FireServer(unpack(args))
+   
+                   getgenv().hahj = false;
+                   
+                   while wait(1200) do
+                       if getgenv().hahj == true then
+                   function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+                   
+   local args = {
+       [1] = {
+           [1] = "Triple Damage"
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("activate boost"):FireServer(unpack(args))
+   
+                   end
+                   end
+               end
+   end)
+   
+   Autofarm:Toggle("Auto Use Triple Coin Boost", false, function(state)
+           if state then
+            function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+
+            local args = {
+                [1] = {
+                    [1] = "Triple Coins",
+                },
+            }
+            
+            workspace["__THINGS"]["__REMOTES"]["activate boost"]:FireServer(unpack(args))
+            getgenv().hahj = true;
+            
+            while wait(1200) do
+                if getgenv().hahj == true then
+            function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+            
+            local args = {
+                [1] = {
+                    [1] = "Triple Coins",
+                },
+            }
+            
+            workspace["__THINGS"]["__REMOTES"]["activate boost"]:FireServer(unpack(args))
+            end
+            end
+                   else
+                    function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+
+                    local args = {
+                        [1] = {
+                            [1] = "Triple Coins",
+                        },
+                    }
+                    
+                    workspace["__THINGS"]["__REMOTES"]["activate boost"]:FireServer(unpack(args))
+                    getgenv().hahj = false;
+                    
+                    while wait(1200) do
+                        if getgenv().hahj == true then
+                    function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+                    
+                    local args = {
+                        [1] = {
+                            [1] = "Triple Coins",
+                        },
+                    }
+                    
+                    workspace["__THINGS"]["__REMOTES"]["activate boost"]:FireServer(unpack(args))
+                    end
+                    end
+                   end
+       end)
+   
+   Autofarm:Button("Use Super Luck!", function()
+       function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+       
+       local args = {
+           [1] = {
+               [1] = "Super Lucky",
+           },
+       }
+       
+       workspace["__THINGS"]["__REMOTES"]["activate boost"]:FireServer(unpack(args))
+       
+       end)
+       
+       Autofarm:Button("Use ULTRA Luck!", function()
+           function getNil(name,class) for _,v in pairs(getnilinstances())do if v.ClassName==class and v.Name==name then return v;end end end
+       
+           local args = {
+               [1] = {
+                   [1] = "Ultra Lucky",
+               },
+           }
+           
+           workspace["__THINGS"]["__REMOTES"]["activate boost"]:FireServer(unpack(args))
+           
+           end)
+       
+       Autofarm:Button("FPSBoost", function()
+           
+           local decalsyeeted = true
+       local g = game
+       local w = g.Workspace
+       local l = g.Lighting
+       local t = w.Terrain
+       t.WaterWaveSize = 0
+       t.WaterWaveSpeed = 0
+       t.WaterReflectance = 0
+       t.WaterTransparency = 0
+       l.GlobalShadows = false
+       l.FogEnd = 9e9
+       l.Brightness = 0
+       settings().Rendering.QualityLevel = "Level01"
+       for i, v in pairs(g:GetDescendants()) do
+           if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+               v.Material = "Plastic"
+               v.Reflectance = 0
+           elseif v:IsA("Decal") or v:IsA("Texture") and decalsyeeted then
+               v.Transparency = 1
+           elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+               v.Lifetime = NumberRange.new(0)
+           elseif v:IsA("Explosion") then
+               v.BlastPressure = 1
+               v.BlastRadius = 1
+           elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") then
+               v.Enabled = false
+           elseif v:IsA("MeshPart") then
+               v.Material = "Plastic"
+               v.Reflectance = 0
+               v.TextureID = 10385902758728957
+           end
+       end
+       for i, e in pairs(l:GetChildren()) do
+           if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
+               e.Enabled = false
+           end
+       end
+           
+       end)
+
+
+       local GameLibrary = require(game:GetService("ReplicatedStorage"):WaitForChild("Framework"):WaitForChild("Library"))
+       local Network = GameLibrary.Network
+       local Run_Service = game:GetService("RunService")
+       local rs = Run_Service.RenderStepped
+       local CurrencyOrder = {"Halloween Candy", "Tech Coins", "Fantasy Coins", "Coins", "Diamonds",}
+       
+       local IMightKillMyselfCauseOfThis = {
+        --Misc
+        ['VIP'] = {'VIP'};
+        --Spawn
+        ['Town'] = {'Town', 'Town FRONT'}; 
+        ['Forest'] = {'Forest', 'Forest FRONT'}; 
+        ['Beach'] = {'Beach', 'Beach FRONT'}; 
+        ['Mine'] = {'Mine', 'Mine FRONT'}; 
+        ['Winter'] = {'Winter', 'Winter FRONT'}; 
+        ['Glacier'] = {'Glacier', 'Glacier Lake'}; 
+        ['Desert'] = {'Desert', 'Desert FRONT'}; 
+        ['Volcano'] = {'Volcano', 'Volcano FRONT'};
+        -- Fantasy init
+        ['Enchanted Forest'] = {'Enchanted Forest', 'Enchanted Forest FRONT'}; 
+        ['Ancient'] = {'Ancient'}; 
+        ['Samurai'] = {'Samurai', 'Samurai FRONT'}; 
+        ['Candy'] = {'Candy'}; 
+        ['Haunted'] = {'Haunted', 'Haunted FRONT'}; 
+        ['Hell'] = {'Hell'}; 
+        ['Heaven'] = {'Heaven'};
+        -- Tech
+        ['Ice Tech'] = {'Ice Tech'}; 
+        ['Tech City'] = {'Tech City'; 'Tech City FRONT'}; 
+        ['Dark Tech'] = {'Dark Tech'; 'Dark Tech FRONT'}; 
+        ['Steampunk'] = {'Steampunk'; 'Steampunk FRONT'}, 
+        ['Alien Forest'] = {"Alien Forest"; "Alien Forest FRONT"}, 
+        ['Alien Lab'] = {"Alien Forest"; "Alien Lab FRONT"};
+    }
+           
+           
+           
+           local Chests = {
+               'All';
+               -- Spawn
+               "Magma Chest",
+               -- Fantasy
+               "Enchanted Chest", "Hell Chest", "Haunted Chest", "Angel Chest", "Grand Heaven Chest",
+               -- Tech
+               "Giant Tech Chest"; "Giant Steampunk Chest"; "Giant Alien Chest"; 
+           }
+
+
+       local Chestareas = {'Magma Chest', 'Enchanted Chest', 'Hell Chest', 'Haunted Chest', 'Angel Chest', 'Grand Heaven Chest', 'Giant Tech Chest', 'Giant Steampunk Chest', 'Giant Alien Chest'}
+       Autofarm2:Dropdown("Select Chest [Testing]",Chestareas,function(chestfarm) 
+        if chestfarm then
+        _G.Chestareas = chestfarm
+        end
+       end)
+
+
+
+
+       local AreaWorldTable = {}
+       for _, v in pairs(game:GetService("ReplicatedStorage").Game.Coins:GetChildren()) do
+           for _, b in pairs(v:GetChildren()) do
+               table.insert(AreaWorldTable, b.Name)
+           end
+           table.insert(AreaWorldTable, v.Name)
+       end
+       
+       -------------------------
+       
+       function AllChests()
+           local returntable = {}
+           local ListCoins = game.workspace['__THINGS']['__REMOTES']["get coins"]:InvokeServer({})[1]
+           for i,v in pairs(ListCoins) do
+               local shit = v
+               shit["index"] = i
+               for aa,bb in pairs(AreaWorldTable) do
+                   if string.find(v.n, bb) then
+                       local thing = string.gsub(v.n, bb.." ", "")
+                       if table.find(Chests, thing) then
+                           shit.n = thing
+                           table.insert(returntable, shit)
+                       end
+                   end
+               end
+           end
+           return returntable
+       end
+       
+       -------------------------------
+       
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "buy egg")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "join coin")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "farm coin")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "claim orbs")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "change pet target")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "get trade")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "add trade pet")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "remove trade pet")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "convert to dark matter")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "redeem dark matter pet")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "redeem rank rewards")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "redeem vip rewards")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "toggle setting")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("a", "activate boost")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "use golden machine")
+       workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "use rainbow machine")
+       -------------------------------
+       
+       function FarmCoin(CoinID, PetID)
+           game.workspace['__THINGS']['__REMOTES']["join coin"]:InvokeServer({[1] = CoinID, [2] = {[1] = PetID}})
+           game.workspace['__THINGS']['__REMOTES']["farm coin"]:FireServer({[1] = CoinID, [2] = PetID})
+       end
+       
+       
+       
+       local Library = require(game:GetService("ReplicatedStorage").Framework.Library)
+       local IDToName = {}
+       local NameToID = {}
+       for i,v in pairs(Library.Directory.Pets ) do
+           IDToName[i] = v.name
+           NameToID[v.name] = i
+       end
+       
+       function GetMyPets()
+              local returntable = {}
+              for i,v in pairs(GameLibrary.Save.Get().Pets) do
+                  if v.e then 
+                      table.insert(returntable, v.uid)
+                  end
+              end
+              return returntable
+           end
+       
+       function GetPets()
+               local MyPets = {}
+               for i,v in pairs(GameLibrary.Save.Get().Pets) do
+                   --if (not _G.AllowMythicals) or (_G.AllowMythicals and (PettoRarity[v.id] ~= 'Mythical' and PettoRarity[v.id] ~= 'Exclusive' and not string.find(IDToName[v.id]:lower(), "maskot"))) then
+                       local ThingyThingyTempTypeThing = (v.g and 'Gold') or (v.r and 'Rainbow') or (v.dm and 'Dark Matter') or 'Normal'
+                       local TempString = ThingyThingyTempTypeThing .. IDToName[v.id]
+                       if MyPets[TempString] then
+                           table.insert(MyPets[TempString], v.uid)
+                       else
+                           MyPets[TempString] = {}
+                           table.insert(MyPets[TempString], v.uid)
+                       end
+                   --end
+               end
+               return MyPets
+           end
+       
+
+       
+
+       
+       function GetCoinTable(area, Type, exclude)
+           exclude = exclude or {}
+           local CoinTable = GetCoins(area, exclude)
+           local function getKeysSortedByValue(tbl, sortFunction)
+               local keys = {}
+               for key in pairs(tbl) do
+                   table.insert(keys, key)
+               end
+               table.sort(
+                   keys,
+                   function(a, b)
+                       return sortFunction(tbl[a].h, tbl[b].h)
+                   end
+               )
+               return keys
+           end
+           local sortedKeys
+           if Type == 'Highest' then
+               sortedKeys = getKeysSortedByValue(CoinTable, function(a, b) return a > b end)
+           elseif Type == 'Lowest' then
+               sortedKeys = getKeysSortedByValue(CoinTable, function(a, b) return a < b end)
+           end
+           local newCoinTable = {}
+       
+           for i,v in pairs(sortedKeys) do
+               table.insert(newCoinTable, CoinTable[v])
+           end
+       
+           return newCoinTable
+       end
+       
+       
+       if _G.MyConnection then _G.MyConnection:Disconnect() end
+           _G.MyConnection = game.Workspace.__THINGS.Orbs.ChildAdded:Connect(function(Orb)
+               game.Workspace.__THINGS.__REMOTES["claim orbs"]:FireServer({{Orb.Name}})
+           end)
+
+
+           Autofarm2:Toggle("Fram Selected Chest [Testing]", false, function(chestfarmstart)
+            if chestfarmstart == true then
+                _G.Farm = true
+            elseif chestfarmstart == false then
+                _G.Farm = false
+            end
+        
+            local CurrentFarmingPets = {}
+            while _G.Farm do
+                local pethingy = GetMyPets()
+                local cointhiny = nil
+        
+            if _G.Chestareas then
+                for i,v in pairs(AllChests()) do
+                    if (v.n == _G.Chestareas) then
+                        local starttick = tick()
+                        for a, b in pairs(pethingy) do
+                            coroutine.wrap(function()
+                                FarmCoin(v.index, b)
+                            end)()
+                        end
+                 end
+                 repeat task.wait(0.001) until not game:GetService("Workspace")["__THINGS"].Coins:FindFirstChild(v.index) or #game:GetService("Workspace")["__THINGS"].Coins[v.index].Pets:GetChildren() == 0 or not _G.Farm
+         end
+         end
+        end
+        end)
+
+        Autofarm2:line()
+
+       Autofarm2:Toggle("Alien Forest", false, function(state)
+        pcall(function()
+                                    if state then
+                                         --
+                                        _G.Stop = true 
+                                        _G.World = "Tech" 
+                                        _G.Area = "Alien Forest" 
+                                        loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                    else
+                                         --GEMFARM OFF
+                                        _G.Stop = false 
+                                        _G.World = "Tech" 
+                                        _G.Area = "Alien Forest" 
+                                        loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                    end
+                                end)
+                                    end)
+
+       Autofarm2:Toggle("Alien Lab", false, function(state)
+        pcall(function()
+                                    if state then
+                                         
+                                        _G.Stop = true 
+                                        _G.World = "Tech" 
+                                        _G.Area = "Alien Lab" 
+                                        loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                    else
+                                         --
+                                        _G.Stop = false 
+                                        _G.World = "Tech" 
+                                        _G.Area = "Alien Lab" 
+                                        loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                    end
+                                end)
+                                    end)
+       Autofarm2:line()
+       Autofarm2:Toggle("Steampunk", false, function(state)
+        pcall(function()
+                                    if state then
+                                         
+                                        _G.Stop = true 
+                                        _G.World = "Tech" 
+                                        _G.Area = "Steampunk" 
+                                        loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                    else
+                                         --
+                                        _G.Stop = false 
+                                        _G.World = "Tech" 
+                                        _G.Area = "Steampunk" 
+                                        loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                    end
+                                end)
+                                    end)
+    
+                                    Autofarm2:Toggle("Dark Tech", false, function(state)
+                                        pcall(function()
+       if state then
+
+       _G.Stop = true 
+       _G.World = "Tech" 
+       _G.Area = "Dark Tech" 
+       
+       function FarmCoin(CoinID, PetID)
+          game.workspace['__THINGS']['__REMOTES']["join coin"]:InvokeServer({[1] = CoinID, [2] = {[1] = PetID}})
+          game.workspace['__THINGS']['__REMOTES']["farm coin"]:FireServer({[1] = CoinID, [2] = PetID})
+       end
+       
+       function GetMyPets()
+          local returntable = {}
+          for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Inventory.Frame.Main.Pets:GetChildren()) do
+              if v.ClassName == 'TextButton' and v.Equipped.Visible then
+                  table.insert(returntable, v.Name)
+              end
+          end
+          return returntable
+       end
+       
+       function GetCoins(world, area)
+          local returntable = {}
+          local ListCoins = game.workspace['__THINGS']['__REMOTES']["get coins"]:InvokeServer({})[1]
+          for i,v in pairs(ListCoins) do
+              if string.lower(v.w) == string.lower(world) and string.lower(v.a) == string.lower(area) then
+                  table.insert(returntable, i)
+              end
+          end
+          return returntable
+       end
+       
+       function CollectOrbs()
+           local ohTable1 = {[1] = {}}
+           for i,v in pairs(game.workspace['__THINGS'].Orbs:GetChildren()) do
+               ohTable1[1][i] = v.Name
+           end
+           game.workspace['__THINGS']['__REMOTES']["claim orbs"]:FireServer(ohTable1)
+        end
+       
+       while wait() and _G.Stop do
+          local cointhiny = GetCoins(_G.World, _G.Area)
+          local pethingy = GetMyPets()
+          for i = 1, #cointhiny do
+              pcall(function() FarmCoin(cointhiny[i], pethingy[i%#pethingy+1]) end)
+              pcall(function() CollectOrbs() end)
+          end
+       end
+       
+       else
+           _G.Stop = false 
+       _G.World = "Tech" 
+       _G.Area = "Dark Tech" 
+       
+       function FarmCoin(CoinID, PetID)
+          game.workspace['__THINGS']['__REMOTES']["join coin"]:InvokeServer({[1] = CoinID, [2] = {[1] = PetID}})
+          game.workspace['__THINGS']['__REMOTES']["farm coin"]:FireServer({[1] = CoinID, [2] = PetID})
+       end
+       
+       function GetMyPets()
+          local returntable = {}
+          for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Inventory.Frame.Main.Pets:GetChildren()) do
+              if v.ClassName == 'TextButton' and v.Equipped.Visible then
+                  table.insert(returntable, v.Name)
+              end
+          end
+          return returntable
+       end
+       
+       function GetCoins(world, area)
+          local returntable = {}
+          local ListCoins = game.workspace['__THINGS']['__REMOTES']["get coins"]:InvokeServer({})[1]
+          for i,v in pairs(ListCoins) do
+              if string.lower(v.w) == string.lower(world) and string.lower(v.a) == string.lower(area) then
+                  table.insert(returntable, i)
+              end
+          end
+          return returntable
+       end
+       
+       function CollectOrbs()
+           local ohTable1 = {[1] = {}}
+           for i,v in pairs(game.workspace['__THINGS'].Orbs:GetChildren()) do
+               ohTable1[1][i] = v.Name
+           end
+           game.workspace['__THINGS']['__REMOTES']["claim orbs"]:FireServer(ohTable1)
+        end
+       
+       while wait() and _G.Stop do
+          local cointhiny = GetCoins(_G.World, _G.Area)
+          local pethingy = GetMyPets()
+          for i = 1, #cointhiny do
+              pcall(function() FarmCoin(cointhiny[i], pethingy[i%#pethingy+1]) end)
+              pcall(function() CollectOrbs() end)
+          end
+       end
+       end
+       end)
+       end)
+       
+       Autofarm2:Toggle("Tech City", false, function(state)
+       if state then
+            
+           _G.Stop = true 
+           _G.World = "Tech" 
+           _G.Area = "Tech City" 
+           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+       else
+            --
+           _G.Stop = false 
+           _G.World = "Tech" 
+           _G.Area = "Tech City" 
+           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+       end
+       end)
+       
+       Autofarm2:line()
+       
+       Autofarm2:Toggle("Heaven", false, function(state)
+           if state then
+                
+               _G.Stop = true 
+               _G.World = "Fantasy" 
+               _G.Area = "Heaven" 
+               loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+           else
+                --
+               _G.Stop = false 
+               _G.World = "Fantasy" 
+               _G.Area = "Heaven" 
+               loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+           end
+           end)
+       
+           Autofarm2:Toggle("Hell", false, function(state)
+               if state then
+                    
+                   _G.Stop = true 
+                   _G.World = "Fantasy" 
+                   _G.Area = "Hell" 
+                   loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+               else
+                    --
+                   _G.Stop = false 
+                   _G.World = "Fantasy" 
+                   _G.Area = "Hell" 
+                   loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+               end
+               end)
+       
+               Autofarm2:Toggle("Haunted", false, function(state)
+                   if state then
+                        
+                       _G.Stop = true 
+                       _G.World = "Fantasy" 
+                       _G.Area = "Haunted" 
+                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                   else
+                        --
+                       _G.Stop = false 
+                       _G.World = "Fantasy" 
+                       _G.Area = "Haunted" 
+                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                   end
+                   end)
+       
+                   Autofarm2:Toggle("Candy", false, function(state)
+                       if state then
+                            
+                           _G.Stop = true 
+                           _G.World = "Fantasy" 
+                           _G.Area = "Candy" 
+                           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                       else
+                            --
+                           _G.Stop = false 
+                           _G.World = "Fantasy" 
+                           _G.Area = "Candy" 
+                           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                       end
+                       end)
+       
+                       Autofarm2:Toggle("Samurai", false, function(state)
+                        
+                           if state then
+                               pcall(function()
+                                
+                               _G.Stop = true 
+                               _G.World = "Fantasy" 
+                               _G.Area = "Samurai" 
+                               loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                           end)
+                           else
+                            pcall(function()
+                                --
+                               _G.Stop = false 
+                               _G.World = "Fantasy" 
+                               _G.Area = "Samurai" 
+                               loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                            end)
+                           end
+                           end)
+       
+                           Autofarm2:Toggle("Ancient", false, function(state)
+                               if state then
+                                   pcall(function()
+                                    
+                                   _G.Stop = true 
+                                   _G.World = "Fantasy" 
+                                   _G.Area = "Ancient" 
+                                   loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                               end)
+                               else
+                                pcall(function()
+                                    --
+                                   _G.Stop = false 
+                                   _G.World = "Fantasy" 
+                                   _G.Area = "Ancient" 
+                                   loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                end)
+                               end
+                               end)
+       
+                               Autofarm2:Toggle("Enchanted Forest", false, function(state)
+                                   if state then
+                                       pcall(function()
+                                        
+                                       _G.Stop = true 
+                                       _G.World = "Fantasy" 
+                                       _G.Area = "Enchanted Forest" 
+                                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                   end)
+                                   else
+                                    pcall(function()
+                                        --
+                                       _G.Stop = false 
+                                       _G.World = "Fantasy" 
+                                       _G.Area = "Enchanted Forest" 
+                                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                    end)
+                                   end
+                                   end)
+                                   Autofarm2:line()
+       
+                                   Autofarm2:Toggle("Volcano", false, function(state)
+           if state then
+                
+               _G.Stop = true 
+               _G.World = "Spawn" 
+               _G.Area = "Volcano" 
+               loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+           else
+                --
+               _G.Stop = false 
+               _G.World = "Spawn" 
+               _G.Area = "Volcano" 
+               loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+           end
+           end)
+       
+           Autofarm2:Toggle("Desert", false, function(state)
+               if state then
+                    
+                   _G.Stop = true 
+                   _G.World = "Spawn" 
+                   _G.Area = "Desert" 
+                   loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+               else
+                    --
+                   _G.Stop = false 
+                   _G.World = "Spawn" 
+                   _G.Area = "Desert" 
+                   loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+               end
+               end)
+       
+               Autofarm2:Toggle("Glacier", false, function(state)
+                   if state then
+       
+
+       
+                        
+                       _G.Stop = true 
+                       _G.World = "Spawn" 
+                       _G.Area = "Glacier" 
+                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                   else
+                        --
+                       _G.Stop = false 
+                       _G.World = "Spawn" 
+                       _G.Area = "Glacier" 
+                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                   end
+                   end)
+       
+                   Autofarm2:Toggle("Winter", false, function(state)
+                       if state then
+                            
+                           _G.Stop = true 
+                           _G.World = "Spawn" 
+                           _G.Area = "Winter" 
+                           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                       else
+                            --
+                           _G.Stop = false 
+                           _G.World = "Spawn" 
+                           _G.Area = "Winter" 
+                           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                       end
+                       end)
+       
+                       Autofarm2:Toggle("Mine", false, function(state)
+                           if state then
+                                
+                               _G.Stop = true 
+                               _G.World = "Spawn" 
+                               _G.Area = "Mine" 
+                               loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                           else
+                                --
+                               _G.Stop = false 
+                               _G.World = "Spawn" 
+                               _G.Area = "Mine" 
+                               loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                           end
+                           end)
+       
+                           Autofarm2:Toggle("Beach", false, function(state)
+                               if state then
+                                    
+                                   _G.Stop = true 
+                                   _G.World = "Spawn" 
+                                   _G.Area = "Beach" 
+                                   loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                               else
+                                    --
+                                   _G.Stop = false 
+                                   _G.World = "Spawn" 
+                                   _G.Area = "Beach" 
+                                   loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                               end
+                               end)
+       
+                               Autofarm2:Toggle("Forest", false, function(state)
+                                   if state then
+                                        
+                                       _G.Stop = true 
+                                       _G.World = "Spawn" 
+                                       _G.Area = "Forest" 
+                                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                   else
+                                        --
+                                       _G.Stop = false 
+                                       _G.World = "Spawn" 
+                                       _G.Area = "Forest" 
+                                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                   end
+                                   end)
+       
+                                   Autofarm2:Toggle("Town", false, function(state)
+                                       if state then
+                                            
+                                           _G.Stop = true 
+                                           _G.World = "Spawn" 
+                                           _G.Area = "Town" 
+                                           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                       else
+                                            --
+                                           _G.Stop = false 
+                                           _G.World = "Spawn" 
+                                           _G.Area = "Town" 
+                                           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/GemFarm'))()
+                                       end
+                                       end)
+   
+   AutoOpenF:Toggle("Auto dellet Basics", false, function(f)
+       getgenv().delletbasics = f
+       while wait() do
+           if getgenv().delletbasics == true then
+   
+   local args = {
+       [1] = {
+           [1] = "Basic"
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("toggle auto delete"):FireServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Auto Open Fantasy Eggs", false, function(statei)
+       getgenv().Shesh = statei
+       while wait() do
+           if getgenv().Shesh == true then
+   
+           
+           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/Auto-open-fantasy-eggs'))()
+           end
+   end
+   end)
+   
+   
+   AutoOpenF:Toggle("Auto Open Normal Eggs", false, function(Helfe)
+       getgenv().asgd = Helfe
+       while wait() do
+           if getgenv().asgd == true then
+   
+           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/Auto-open-normal-eggs'))()
+           end
+   end
+   end)
+   
+   
+   AutoOpenF:Toggle("Auto Open Dominus Egg", false, function(stateie)
+       getgenv().Sheshg = stateie
+       while wait() do
+           if getgenv().Sheshg == true then
+   
+           loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/Auto-open-dominus-eggs'))()
+   
+           end
+       end
+   end)
+   
+   AutoOpenF:Label(" merchant ")
+   
+   AutoOpenF:Toggle("Autobuy merchant item 1", false, function(fuck)
+   
+       getgenv().whatfuck = fuck
+       while wait() do
+           if getgenv().whatfuck == true then
+   
+           local args = {
+               [1] = {
+                   [1] = 1
+               }
+           }
+           
+           workspace.__THINGS.__REMOTES:FindFirstChild("buy merchant item"):InvokeServer(unpack(args))
+   
+        end
+       end
+   end)
+   
+   AutoOpenF:Toggle("Autobuy merchant item 2", false, function(i)
+   
+       getgenv().ohmylord = i
+       while wait() do
+           if getgenv().ohmylord == true then
+   
+           local args = {
+               [1] = {
+                   [1] = 2
+               }
+           }
+           
+           workspace.__THINGS.__REMOTES:FindFirstChild("buy merchant item"):InvokeServer(unpack(args))
+        end
+       end
+   end)
+   
+   AutoOpenF:Toggle("Autobuy merchant item 3", false, function(i)
+   
+       getgenv().ohmylord = i
+       while wait() do
+           if getgenv().ohmylord == true then
+   
+           local args = {
+               [1] = {
+                   [1] = 3
+               }
+           }
+           
+           workspace.__THINGS.__REMOTES:FindFirstChild("buy merchant item"):InvokeServer(unpack(args))
+   
+       end
+    end
+   end)
+   
+AutoOpenF:line()
+AutoOpenF:Toggle("Auto Upgrade Pet Storage", false, function(t)
+    getgenv().PetStorage = t
+    while wait() do
+        if getgenv().PetStorage == true then
+    local args = {
+        [1] = {
+            [1] = "Pet Storage"
+        }
+    }
+    workspace.__THINGS.__REMOTES:FindFirstChild("buy upgrade"):InvokeServer(unpack(args))
+    
+        end
+    end
+    end)
+
+    AutoOpenF:Toggle("Auto Upgrade walkspeed", false, function(t)
+        getgenv().walkspeed = t
+        while wait() do
+            if getgenv().walkspeed == true then
+
+local args = {
+    [1] = {
+        [1] = "Player Walkspeed"
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy upgrade"):InvokeServer(unpack(args))
+
+            end
+        end
+        end)
+        AutoOpenF:Toggle("Auto Upgrade Orbs Reach", false, function(t)
+            getgenv().walksorbreachpeed = t
+            while wait() do
+                if getgenv().orbreach == true then
+    
+local args = {
+    [1] = {
+        [1] = "Orb Pickup Distance"
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy upgrade"):InvokeServer(unpack(args))
+
+    
+                end
+            end
+            end)
+            AutoOpenF:Toggle("Auto Upgrade More Diamonds", false, function(t)
+                getgenv().morediamonds = t
+                while wait() do
+                    if getgenv().morediamonds == true then
+local args = {
+    [1] = {
+        [1] = "More Diamonds"
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy upgrade"):InvokeServer(unpack(args))
+
+                    end
+                end
+                end)
+                AutoOpenF:Toggle("Auto Upgrade Pet Speed", false, function(t)
+                    getgenv().PetWalkspeed = t
+                    while wait() do
+                        if getgenv().PetWalkspeed == true then
+local args = {
+    [1] = {
+        [1] = "Pet Walkspeed"
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy upgrade"):InvokeServer(unpack(args))
+
+                        end
+                    end
+                    end)
+                    AutoOpenF:Toggle("Auto Upgrade Pet Strength", false, function(t)
+                        getgenv().PetStrength = t
+                        while wait() do
+                            if getgenv().PetStrength == true then
+
+local args = {
+    [1] = {
+        [1] = "Pet Strength"
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy upgrade"):InvokeServer(unpack(args))
+                            end
+                        end
+                        end)
+                        
+   AutoOpenF:line()
+   
+               AutoOpenF:Toggle("AutoOpen Random Eggs", false, function(uwu)
+       
+                   getgenv().Ani = uwu
+                   while wait() do
+                       if getgenv().Ani == true then
+   
+                       loadstring(game:HttpGet('https://raw.githubusercontent.com/Mana42138/pet-sim-stuff/main/Auto-open-random-eggs'))()
+                       wait(.1)
+           end
+        end
+           end)
+   
+          AutoOpenF:Label(" Auto Buy Eggs ")
+   AutoOpenF:Toggle("Cracked Egg", false, function(v)
+       getgenv().Cracked = v
+       while wait() do
+       if getgenv().Cracked == true then
+   local args = {
+       [1] = {
+           [1] = "Cracked Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Spotted Egg", false, function(v)
+       getgenv().Spotted = v
+       while wait() do
+       if getgenv().Spotted == true then
+   local args = {
+       [1] = {
+           [1] = "Spotted Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Cracked Egg", false, function(v)
+       getgenv().CrackedG = v
+       while wait() do
+       if getgenv().CrackedG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Cracked Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Spotted Egg", false, function(v)
+       getgenv().SpottedG = v
+       while wait() do
+       if getgenv().SpottedG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Spotted Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Wood Egg", false, function(v)
+       getgenv().Wood = v
+       while wait() do
+       if getgenv().Wood == true then
+   local args = {
+       [1] = {
+           [1] = "Wood Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Grass Egg", false, function(v)
+       getgenv().Grass = v
+       while wait() do
+       if getgenv().Grass == true then
+   local args = {
+       [1] = {
+           [1] = "Grass Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Wood Egg", false, function(v)
+       getgenv().WoodG = v
+       while wait() do
+       if getgenv().WoodG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Wood Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Grass Egg", false, function(v)
+       getgenv().GrassG = v
+       while wait() do
+       if  getgenv().GrassG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Grass Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Beachball Egg", false, function(v)
+       getgenv().Beachball = v
+       while wait() do
+       if getgenv().Beachball == true then
+   local args = {
+       [1] = {
+           [1] = "Beachball Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Coconut Egg", false, function(v)
+       getgenv().Coconut = v
+       while wait() do
+       if getgenv().Coconut == true then
+   local args = {
+       [1] = {
+           [1] = "Coconut Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Beachball Egg", false, function(v)
+       getgenv().BeachballG = v
+       while wait() do
+       if getgenv().BeachballG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Beachball Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Coconut Egg", false, function(v)
+       getgenv().CoconutG = v
+       while wait() do
+       if getgenv().CoconutG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Coconut Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Rock Egg", false, function(v)
+       getgenv().Rock = v
+       while wait() do
+       if getgenv().Rock == true then
+   local args = {
+       [1] = {
+           [1] = "Rock Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Geode Egg", false, function(v)
+       getgenv().Geode = v
+       while wait() do
+       if getgenv().Geode == true then
+   local args = {
+       [1] = {
+           [1] = "Geode Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Rock Egg", false, function(v)
+       getgenv().RockG = v
+       while wait() do
+       if getgenv().RockG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Rock Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Geode Egg", false, function(v)
+       getgenv().GeodeG = v
+       while wait() do
+       if getgenv().GeodeG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Geode Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Snow Egg", false, function(v)
+       getgenv().Snow = v
+       while wait() do
+       if getgenv().Snow == true then
+   local args = {
+       [1] = {
+           [1] = "Snow Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Ice Egg", false, function(v)
+       getgenv().Ice = v
+       while wait() do
+       if getgenv().Ice == true then
+   local args = {
+       [1] = {
+           [1] = "Ice Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Snow Egg", false, function(v)
+       getgenv().SnowG = v
+       while wait() do
+       if getgenv().SnowG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Snow Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Ice Egg", false, function(v)
+       getgenv().IceG = v
+       while wait() do
+       if getgenv().IceG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Ice Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Icicle Egg", false, function(v)
+       getgenv().Icicle = v
+       while wait() do
+       if getgenv().Icicle == true then
+   local args = {
+       [1] = {
+           [1] = "Icicle Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Yeti Egg", false, function(v)
+       getgenv().Yeti = v
+       while wait() do
+       if getgenv().Yeti == true then
+   local args = {
+       [1] = {
+           [1] = "Yeti Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Icicle Egg", false, function(v)
+       getgenv().IcicleG = v
+       while wait() do
+       if getgenv().IcicleG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Icicle Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   
+   
+   AutoOpenF:Toggle("Golden Yeti Egg", false, function(v)
+       getgenv().YetiG = v
+       while wait() do
+       if getgenv().YetiG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Yeti Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Cactus Egg", false, function(v)
+       getgenv().Cactus = v
+       while wait() do
+       if getgenv().Cactus == true then
+   local args = {
+       [1] = {
+           [1] = "Cactus Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Spiked Egg", false, function(v)
+       getgenv().Spiked = v
+       while wait() do
+       if getgenv().Spiked == true then
+   local args = {
+       [1] = {
+           [1] = "Spiked Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Cactus Egg", false, function(v)
+       getgenv().CactusG = v
+       while wait() do
+       if getgenv().CactusG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Cactus Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Spiked Egg", false, function(v)
+       getgenv().SpikedG = v
+       while wait() do
+       if getgenv().SpikedG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Spiked Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Obsidian Egg", false, function(v)
+       getgenv().Obsidian = v
+       while wait() do
+       if getgenv().Obsidian == true then
+   local args = {
+       [1] = {
+           [1] = "Obsidian Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Magma Egg", false, function(v)
+       getgenv().Magma = v
+       while wait() do
+       if getgenv().Magma == true then
+   local args = {
+       [1] = {
+           [1] = "Magma Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Obsidian Egg", false, function(v)
+       getgenv().ObsidianG = v
+       while wait() do
+       if getgenv().ObsidianG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Obsidian Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Magma Egg", false, function(v)
+       getgenv().MagmaG = v
+       while wait() do
+       if getgenv().MagmaG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Magma Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   AutoOpenF:Label(" Fantasy Eggs ")
+   AutoOpenF:Toggle("Enchanted Egg", false, function(v)
+       getgenv().Enchanted = v
+       while wait() do
+       if getgenv().Enchanted == true then
+   local args = {
+       [1] = {
+           [1] = "Enchanted Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Enchanted Egg", false, function(v)
+       getgenv().EnchantedG = v
+       while wait() do
+       if getgenv().EnchantedG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Enchanted Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+   end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Relic Egg", false, function(v)
+       getgenv().Relic = v
+       while wait() do
+       if getgenv().Relic == true then
+   local args = {
+       [1] = {
+           [1] = "Relic Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+   end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Samurai Egg", false, function(v)
+       getgenv().Samurai = v
+       while wait() do
+       if  getgenv().Samurai == true then
+   local args = {
+       [1] = {
+           [1] = "Samurai Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+  end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Samurai Egg", false, function(v)
+       getgenv().SamuraiG = v
+       while wait() do
+       if getgenv().SamuraiG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Samurai Egg",
+           [2] = false
+       }
+   }
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Rainbow Egg", false, function(v)
+       getgenv().Rainbow = v
+       while wait() do
+       if getgenv().Rainbow == true then
+   local args = {
+       [1] = {
+           [1] = "Rainbow Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+       end
+end
+   end)
+   
+   AutoOpenF:Toggle("Golden Rainbow Egg", false, function(v)
+       getgenv().RainbowG = v
+       while wait() do
+       if getgenv().RainbowG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Rainbow Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+   end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Haunted Egg", false, function(v)
+       getgenv().Haunted = v
+       while wait() do
+       if getgenv().Haunted == true then
+   local args = {
+       [1] = {
+           [1] = "Haunted Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Haunted Egg", false, function(v)
+       getgenv().HauntedG = v
+       while wait() do
+       if getgenv().HauntedG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Haunted Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Hell Egg", false, function(v)
+       getgenv().Hell = v
+       while wait() do
+       if getgenv().Hell == true then
+   local args = {
+       [1] = {
+           [1] = "Hell Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Hell Egg", false, function(v)
+       getgenv().HellEggG = v
+       while wait() do
+       if getgenv().HellEggG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden HellEgg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Heaven Egg", false, function(v)
+       getgenv().Heaven = v
+       while wait() do
+       if getgenv().Heaven == true then
+   local args = {
+       [1] = {
+           [1] = "Heaven Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Heaven Egg", false, function(v)
+       getgenv().HeavenG = v
+       while wait() do
+       if  getgenv().HeavenG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Heaven Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Empyrean Egg", false, function(v)
+       getgenv().Empyrean = v
+       while wait() do
+       if getgenv().Empyrean == true then
+   
+   local args = {
+       [1] = {
+           [1] = "Empyrean Egg",
+           [2] = false
+       }
+   }
+   
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Toggle("Golden Empyrean Egg", false, function(v)
+   getgenv().EmpyreanG = v
+   while wait() do
+   if getgenv().EmpyreanG == true then
+   local args = {
+       [1] = {
+           [1] = "Golden Empyrean Egg",
+           [2] = false
+       }
+   }
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+   end
+   end)
+   
+   AutoOpenF:Label(" Tech eggs ")
+   AutoOpenF:Toggle("Metal Egg", false, function(v)
+       getgenv().Metal = v
+       while wait() do
+       if getgenv().Metal == true then
+   local args = {
+       [1] = {
+           [1] = "Metal Egg",
+           [2] = false
+       }
+   }
+   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+end
+       end
+       end)
+   
+           AutoOpenF:Toggle("Golden Metal Egg", false, function(v)
+               getgenv().MetalG = v
+               while wait() do
+               if getgenv().MetalG == true then
+           local args = {
+               [1] = {
+                   [1] = "Golden Metal Egg",
+                   [2] = false
+               }
+           }
+           workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+           end
+               end
+               end)
+   
+               AutoOpenF:Toggle("Tech Egg", false, function(v)
+                   getgenv().Tech = v
+                   while wait() do
+                   if getgenv().Tech == true then
+               local args = {
+                   [1] = {
+                       [1] = "Tech Egg",
+                       [2] = false
+                   }
+               }
+               workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+               end
+                   end
+                   end)
+   
+                   AutoOpenF:Toggle("Golden Tech Egg", false, function(v)
+                       getgenv().TechG = v
+                       while wait() do
+                       if getgenv().TechG == true then
+                   local args = {
+                       [1] = {
+                           [1] = "Golden Tech Egg",
+                           [2] = false
+                       }
+                   }
+                   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                   end
+                       end
+                       end)
+   
+                       AutoOpenF:Toggle("Titanium Egg", false, function(v)
+                           getgenv().Titanium = v
+                           while wait() do
+                           if getgenv().Titanium == true then
+                       local args = {
+                           [1] = {
+                               [1] = "Titanium Egg",
+                               [2] = false
+                           }
+                       }
+                       workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                       end
+                           end
+                           end)
+   
+                           AutoOpenF:Toggle("Golden Titanium Egg", false, function(v)
+                               getgenv().GTitanium = v
+                               while wait() do
+                               if getgenv().GTitanium == true then
+                           local args = {
+                               [1] = {
+                                   [1] = "Golden Titanium Egg",
+                                   [2] = false
+                               }
+                           }
+                           workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                           end
+                               end
+                               end)
+   
+                               AutoOpenF:Toggle("Dark Tech Egg", false, function(v)
+                                   getgenv().Dark = v
+                                   while wait() do
+                                   if getgenv().Dark == true then
+                               local args = {
+                                   [1] = {
+                                       [1] = "Dark Tech Egg",
+                                       [2] = false
+                                   }
+                               }
+                               workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                               end
+                                   end
+                                   end)
+   
+                                   AutoOpenF:Toggle("Golden Dark Tech Egg", false, function(v)
+                                       getgenv().GoldenDark = v
+                                       while wait() do
+                                       if  getgenv().GoldenDark == true then
+                                   local args = {
+                                       [1] = {
+                                           [1] = "Golden Dark Tech Egg",
+                                           [2] = false
+                                       }
+                                   }
+                                   workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                                   end
+                                       end
+                                       end)
+
+                                       AutoOpenF:Toggle("Steampunk Egg", false, function(v)
+                                        getgenv().Steampunk = v
+                                        while wait() do
+                                        if getgenv().Steampunk == true then
+                                        local args = {
+                                            [1] = {
+                                                [1] = "Steampunk Egg",
+                                                [2] = false
+                                            }
+                                        } 
+                                        workspace.THINGS.REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                                    end
+                                        end
+                                        end)
+
+                                        AutoOpenF:Toggle("Golden Steampunk Egg", false, function(v)
+                                            getgenv().SteampunkG = v
+                                            while wait() do
+                                            if getgenv().SteampunkG == true then
+                                            local args = {
+                                                [1] = {
+                                                    [1] = "Golden Steampunk Egg",
+                                                    [2] = false
+                                                }
+                                            }
+                                            
+                                            workspace.THINGS.REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                                        end
+                                            end
+                                            end)
+AutoOpenF:line()
+                                            AutoOpenF:Toggle("Mechanical Egg", false, function(v)
+                                                getgenv().Mechanical = v
+                                                while wait() do
+                                                if getgenv().Mechanical == true then
+                                                local args = {
+                                                    [1] = {
+                                                        [1] = "Mechanical Egg",
+                                                        [2] = false
+                                                    }
+                                                }
+                                                
+                                                workspace.THINGS.REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                                            end
+                                                end
+                                                end)
+
+                                                AutoOpenF:Toggle("Golden Mechanical Egg", false, function(v)
+                                                    getgenv().MechanicalG = v
+                                                    while wait() do
+                                                    if getgenv().MechanicalG == true then
+                                                    local args = {
+                                                        [1] = {
+                                                            [1] = "Golden Mechanical Egg",
+                                                            [2] = false
+                                                        }
+                                                    }
+                                                    
+                                                    workspace.THINGS.REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                                                end
+                                                    end
+                                                    end)
+
+                                                    AutoOpenF:Toggle("Chemical Egg", false, function(v)
+                                                        getgenv().ChemicalEgg = v
+                                                        while wait() do
+                                                        if getgenv().ChemicalEgg == true then
+
+local args = {
+    [1] = {
+        [1] = "Chemical Egg",
+        [2] = false
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+
+                                                    end
+                                                        end
+                                                        end)
+
+                                                        AutoOpenF:Toggle("Golden Chemical Egg", false, function(v)
+                                                            getgenv().gChemicalEgg = v
+                                                            while wait() do
+                                                            if getgenv().gChemicalEgg == true then
+    
+
+local args = {
+    [1] = {
+        [1] = "Golden Chemical Egg",
+        [2] = false
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+
+    
+                                                        end
+                                                            end
+                                                            end)
+
+                                                            AutoOpenF:Toggle("AlienEgg", false, function(v)
+                                                                getgenv().AlienEgg = v
+                                                                while wait() do
+                                                                if getgenv().AlienEgg == true then
+        
+    
+local args = {
+    [1] = {
+        [1] = "Alien Egg",
+        [2] = false
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+
+    
+        
+                                                            end
+                                                                end
+                                                                end)
+
+                                                                AutoOpenF:Toggle("Golden Alien Egg", false, function(v)
+                                                                    getgenv().gAlienEgg = v
+                                                                    while wait() do
+                                                                    if getgenv().gAlienEgg == true then
+            
+        
+local args = {
+    [1] = {
+        [1] = "Golden Alien Egg",
+        [2] = false
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+
+    
+        
+            
+                                                                end
+                                                                    end
+                                                                    end)
+
+                                                                    AutoOpenF:Toggle("Martian Egg", false, function(v)
+                                                                        getgenv().MartianEgg = v
+                                                                        while wait() do
+                                                                        if getgenv().MartianEgg == true then
+                
+            
+local args = {
+    [1] = {
+        [1] = "Martian Egg",
+        [2] = false
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+
+                                                                    end
+                                                                        end
+                                                                        end)
+
+                                                                        AutoOpenF:Toggle("Golden Martian Egg", false, function(v)
+                                                                            getgenv().gMartianEgg = v
+                                                                            while wait() do
+                                                                            if getgenv().gMartianEgg == true then
+local args = {
+    [1] = {
+        [1] = "Golden Martian Egg",
+        [2] = false
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                                                                        end
+                                                                            end
+                                                                            end)
+
+
+                                                                            AutoOpenF:Toggle("Planet Egg", false, function(v)
+                                                                                getgenv().PlanetEgg = v
+                                                                                while wait() do
+                                                                                if getgenv().PlanetEgg == true then
+local args = {
+    [1] = {
+        [1] = "Planet Egg",
+        [2] = false
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                                                                            end
+                                                                                end
+                                                                                end)
+
+                                                                                AutoOpenF:Toggle("Golden Planet Egg", false, function(v)
+                                                                                    getgenv().gPlanetEgg = v
+                                                                                    while wait() do
+                                                                                    if getgenv().gPlanetEgg == true then
+local args = {
+    [1] = {
+        [1] = "Golden Planet Egg",
+        [2] = false
+    }
+}
+
+workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+                                                                                end
+                                                                                    end
+                                                                                    end)
+
+
+
+Troll:Button("Load infint Yield", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+
+Troll:Button("Load Dark Dex", function()
+    local loaded, dex = pcall(game.GetObjects, game, "rbxassetid://3567096419")
+    if not loaded or (loaded and (not dex[1] or typeof(dex[1]) ~= "Instance")) then
+        return warn(not loaded and dex or "Failed to load '3567096419'")
+    end
+    dex = dex[1]
+    if syn and type(syn) == "table" and syn.protect_gui and type(syn.protect_gui) == "function" then
+        pcall(syn.protect_gui, dex)
+    end
+    math.randomseed(os.clock())
+    local name = ""
+    for _ = 1, math.random(24, 33) do
+        name = name .. string.char(math.random(33, 126))
+    end
+    dex.Name = name
+    dex.Parent = (get_hidden_ui and get_hidden_ui()) or (gethui and gethui()) or (get_hidden_gui and get_hidden_gui()) or game:GetService("CoreGui")
+    local meta = {__index = getfenv()}
+    local function sandbox(v)
+        task.spawn(setfenv(loadstring(v.Source, "=" .. v:GetFullName()), setmetatable({script = v}, meta)))
+    end
+    if dex:IsA("LuaSourceContainer") then
+        sandbox(v)
+    end
+    for _, v in ipairs(dex:GetDescendants()) do
+        if v:IsA("LuaSourceContainer") then
+            sandbox(v)
+        end
+    end
+    return dex
+end)
+
+Troll:Button("Load Void hub", function()
+    loadstring(game:HttpGet("https://voidhubwn.glitch.me/Script.lua", true))()
+end)
+
+--Troll:Button("Visual Dupe Gems", function()
+   -- function comma_value(amount)
+    --  local formatted = amount
+   --   while true do  
+  --      formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+ --       if (k == 0) then
+  --        break
+ --       end
+ --     end
+  --    return formatted
+ --   end
+
+ --   local diamonds = game.Players.LocalPlayer.PlayerGui.Main.Right.Diamonds.Amount
+ --   local old = diamonds.Text
+ --   local oldNumber = string.gsub(old, ",", "")
+ --   local newNumber = oldNumber * 2
+ --   local new = comma_value(newNumber)
+ --   local newString = tostring(new)
+  --  diamonds.Text = newString
+  --  end)
+
+u:line()
+                                       u:Button("Destroy Gui", function()
+                                        game.CoreGui:FindFirstChild("Mana"):Destroy()
+                                    end)
+
+                                    u:Button("Rejoin", function()
+                                        local ts = game:GetService("TeleportService")
+                                        local p = game:GetService("Players").LocalPlayer
+                                        ts:Teleport(game.PlaceId, p)
+                                     end)
+
+
+
+
+
+
+local GameLibrary = require(game:GetService("ReplicatedStorage"):WaitForChild("Framework"):WaitForChild("Library"))
+local Network = GameLibrary.Network
+local Run_Service = game:GetService("RunService")
+local rs = Run_Service.RenderStepped
+local CurrencyOrder = {"Halloween Candy", "Tech Coins", "Fantasy Coins", "Coins", "Diamonds",}
+
+local Library = require(game:GetService("ReplicatedStorage").Framework.Library)
+local IDToName = {}
+local NameToID = {}
+for i,v in pairs(Library.Directory.Pets ) do
+    IDToName[i] = v.name
+    NameToID[v.name] = i
+end
+
+function GetMyPets()
+       local returntable = {}
+       for i,v in pairs(GameLibrary.Save.Get().Pets) do
+           if v.e then 
+               table.insert(returntable, v.uid)
+           end
+       end
+       return returntable
+    end
+
+
+function GetPets()
+    local MyPets = {}
+    for i,v in pairs(GameLibrary.Save.Get().Pets) do
+        if (not _G.AllowMythicals) or (_G.AllowMythicals and (PettoRarity[v.id] ~= 'Mythical' and PettoRarity[v.id] ~= 'Exclusive' and not string.find(IDToName[v.id]:lower(), "maskot"))) then
+            local ThingyThingyTempTypeThing = (v.g and 'Gold') or (v.r and 'Rainbow') or (v.dm and 'Dark Matter') or 'Normal'
+            local TempString = ThingyThingyTempTypeThing .. IDToName[v.id]
+            if MyPets[TempString] then
+                table.insert(MyPets[TempString], v.uid)
+            else
+                MyPets[TempString] = {}
+                table.insert(MyPets[TempString], v.uid)
+            end
+        end
+    end
+    return MyPets
+end
+
+local GameLibrary = require(game:GetService("ReplicatedStorage"):WaitForChild("Framework"):WaitForChild("Library"))
+local IDToName = {}
+local NameToID = {}
+local PettoRarity = {}
+local RarityTable = {}
+local PetNamesTable = {}
+local PetNamesTable = {}
+
+for i,v in pairs(GameLibrary.Directory.Pets) do
+    IDToName[i] = v.name
+    NameToID[v.name] = i
+    PettoRarity[i] = v.rarity
+    if not table.find(RarityTable, v.rarity) then
+        table.insert(RarityTable, v.rarity)
+    end
+    table.insert(PetNamesTable, v.name)
+end
+
+pets2:Slider("Select pet amount", 0, 6, 1, function(countcombinefunc)
+    if countcombinefunc then
+        _G.CountCombineFunc1 = countcombinefunc
+    end
+    print("Selected Combine Count: ", _G.CountCombineFunc1)
+end)
+
+
+
+pets2:Toggle("Auto golden", false, function(togglegoldfunc)
+    
+if togglegoldfunc == true then
+    _G.ToggleGold = true
+elseif togglegoldfunc == false then
+    _G.ToggleGold = false
+end
+end)
+
+
+pets2:Toggle("Auto rainbow", false, function(toggleraibowfunc)
+    
+if toggleraibowfunc == true then
+    _G.ToggleRainbow = true
+elseif toggleraibowfunc == false then
+    _G.ToggleRainbow = false
+end
+end)
+
+pets2:Toggle("Enable Auto Golden / Rainbow", false, function(autocombinefunc)
+    
+    if autocombinefunc == true then
+        _G.AutoCom = true
+    elseif autocombinefunc == false then
+        _G.AutoCom = false
+    end
+    
+    while wait() and _G.AutoCom do
+        for i, v in pairs(GetPets()) do
+            if #v >= _G.CountCombineFunc1 and _G.AutoCom then
+                if string.find(i, "Normal") and _G.AutoCom and _G.ToggleGold then
+                    local Args = {}
+                    for eeeee = 1, _G.CountCombineFunc1 do
+                        Args[#Args+1] = v[#Args+1]
+                    end
+                    Library.Network.Invoke("use golden machine", Args)
+    
+                elseif string.find(i, "Gold") and _G.AutoCom and _G.ToggleRainbow then
+                    local Args = {}
+                    for eeeee = 1, _G.CountCombineFunc1 do
+                        Args[#Args+1] = v[#Args+1]
+                    end
+                    Library.Network.Invoke("use rainbow machine", Args)
+                end
+            end
+        end
+    end
+    
+    spawn(function()
+        while wait() and _G.AutoCom do
+            if not _G.ToggleGold and not _G.ToggleRainbow then 
+                repeat wait(1) until _G.ToggleGold or _G.ToggleRainbow
+            end
+            if tonumber(_G.CountCombineFunc1) == nil then
+                repeat wait() until tonumber(_G.CountCombineFunc1) ~= nil
+            end
+            for i, v in pairs(GetPets()) do
+                if #v >= _G.CountCombineFunc1 and (_G.ToggleGold or _G.ToggleRainbow) then
+                    if string.find(i, "Normal") and _G.ToggleGold then
+                        local Args = {}
+                        for eeeee = 1, _G.CountCombineFunc1 do
+                            Args[#Args+1] = v[#Args+1]
+                        end
+                       GameLibrary.Network.Invoke("use golden machine", Args)
+                   elseif string.find(i, "Gold") and _G.ToggleRainbow then
+                        local Args = {}
+                        for eeeee = 1, _G.CountCombineFunc1 do
+                            Args[#Args+1] = v[#Args+1]
+                       end
+                    GameLibrary.Network.Invoke("use rainbow machine", Args)
+                    end
+                end
+            end
+        end
+    end)
+    end)
+
+pets2:Toggle("Auto Claim Dark Matter Pets", false, function(autoclaimdark)
+
+if autoclaimdark == true then
+    _G.AutoClaimDarkMatter = true
+elseif autoclaimdark == false then
+    _G.AutoClaimDarkMatter = false
+end
+    
+spawn(function()
+    while task.wait() and _G.AutoClaimDarkMatter do
+        for i,v in pairs(GameLibrary.Save.Get().DarkMatterQueue) do
+            if math.floor(v.readyTime - os.time()) < 0 then
+                workspace.__THINGS.__REMOTES["redeem dark matter pet"]:InvokeServer({[1] = i})
+            end
+            end
+        task.wait(15)
+    end
+end)
+end)
